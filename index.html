@@ -1,0 +1,470 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Tally Board</title>
+<meta name="theme-color" content="#EDF0F3" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0E1217" media="(prefers-color-scheme: dark)">
+<meta name="color-scheme" content="light dark">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Tally Board">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" type="image/png" href="icon-192.png">
+<style>
+/* Layout: sticky masthead with Score / Ranking tabs, one list of bar rows, a fixed scoring dock at the bottom (Score tab only). Scoreboard amber on graphite. */
+:root{
+  --bg:#EDF0F3; --surface:#FFFFFF; --surface-2:#E1E6EC; --fg:#141A21; --muted:#59636F; --line:#D2D9E1;
+  --accent:#D9480F; --accent-ink:#B23A08; --on-accent:#FFFFFF; --bar:#AEBAC7; --neg:#C0392B; --on-neg:#FFFFFF; --note:#FBE6DA;
+  --font-display:ui-rounded,"SF Pro Rounded",-apple-system,system-ui,sans-serif;
+  --font-body:-apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,"Segoe UI",sans-serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#0E1217; --surface:#171D25; --surface-2:#232C37; --fg:#ECF0F4; --muted:#9AA5B1; --line:#2C3642;
+    --accent:#FF8A3D; --accent-ink:#FF9E5E; --on-accent:#1B1108; --bar:#46546A; --neg:#FF7A6B; --on-neg:#26090A; --note:#2A1C12;
+    color-scheme:dark;
+  }
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+html{background:var(--bg)}
+body{
+  background:var(--bg); color:var(--fg); font-family:var(--font-body); font-size:15px; line-height:1.4; min-height:100vh;
+  padding-top:env(safe-area-inset-top, 0px);
+  padding-left:max(16px, env(safe-area-inset-left, 0px));
+  padding-right:max(16px, env(safe-area-inset-right, 0px));
+  -webkit-text-size-adjust:100%; -webkit-tap-highlight-color:transparent;
+}
+body::before{content:""; position:fixed; inset:0 0 auto; height:env(safe-area-inset-top, 0px); background:var(--bg); z-index:10}
+button{font:inherit; color:inherit; touch-action:manipulation}
+:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+
+.masthead{position:sticky; top:env(safe-area-inset-top, 0px); z-index:9; background:var(--bg); padding-block:14px 10px; display:grid; gap:12px}
+.mast-row{display:flex; align-items:center; gap:12px}
+.mast-title{flex:1; min-width:0}
+h1{margin:0; font:700 26px/1.1 var(--font-display); letter-spacing:-.01em; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+.sub{margin:2px 0 0; font-size:13px; color:var(--muted)}
+.icon-btn{width:44px; height:44px; border-radius:12px; border:0; background:var(--surface); color:var(--fg); display:grid; place-items:center; cursor:pointer}
+.tabs{display:grid; grid-template-columns:1fr 1fr; gap:4px; padding:4px; background:var(--surface-2); border-radius:12px}
+.tabs button{height:38px; border:0; border-radius:9px; background:transparent; color:var(--muted); font-weight:600; cursor:pointer}
+.tabs button[aria-selected="true"]{background:var(--surface); color:var(--fg)}
+
+main{padding-bottom:calc(var(--dock-h, 190px) + 24px)}
+body[data-tab="rank"] main{padding-bottom:calc(32px + env(safe-area-inset-bottom, 0px))}
+
+.rows{display:grid; gap:8px}
+.row{
+  appearance:none; -webkit-appearance:none; width:100%; text-align:left; background:var(--surface); border:1.5px solid transparent; border-radius:12px;
+  padding:10px 12px; display:grid; grid-template-columns:26px minmax(0,1fr) auto; column-gap:10px; align-items:center;
+}
+button.row{cursor:pointer}
+.row.sel{border-color:var(--accent)}
+.rank{font:700 15px var(--font-display); color:var(--muted); text-align:center; font-variant-numeric:tabular-nums}
+.body{min-width:0; display:block}
+.name{display:block; font-weight:600; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+.meta{display:block; font-size:12px; color:var(--muted)}
+.score{font:700 26px/1 var(--font-display); font-variant-numeric:tabular-nums; text-align:right}
+.score.negv{color:var(--neg)}
+.lead .rank, .lead .score:not(.negv){color:var(--accent-ink)}
+.track{position:relative; display:block; height:10px; margin-top:7px; border-radius:5px; background:var(--surface-2); overflow:hidden}
+.fill{position:absolute; top:0; bottom:0; border-radius:5px; background:var(--bar); transition:left .3s ease, width .3s ease}
+.lead .fill{background:var(--accent)}
+.fill.neg{background:var(--neg)}
+.zero{position:absolute; top:0; bottom:0; width:2px; background:var(--fg); opacity:.35}
+.big .track{height:22px; border-radius:7px}
+.big .fill{border-radius:7px}
+.big .row{padding:12px}
+
+.note{display:flex; gap:10px; align-items:center; justify-content:space-between; margin-bottom:10px; padding:10px 12px; border-radius:10px; background:var(--note); font-size:13px}
+.empty{padding:18px 4px; color:var(--muted)}
+
+.add{display:flex; gap:8px; margin-top:12px}
+body[data-tab="rank"] .add, body[data-tab="rank"] #addMsg{display:none}
+input[type="text"], input[type="number"]{
+  flex:1; min-width:0; height:46px; padding:0 12px; font:inherit; font-size:16px; color:var(--fg);
+  background:var(--surface); border:1.5px solid var(--line); border-radius:10px; -webkit-appearance:none; appearance:none;
+}
+input::placeholder{color:var(--muted)}
+.btn{height:46px; padding:0 16px; border:0; border-radius:10px; background:var(--accent); color:var(--on-accent); font-weight:600; cursor:pointer; white-space:nowrap}
+.btn.ghost{background:var(--surface-2); color:var(--fg)}
+.btn.danger{background:var(--neg); color:var(--on-neg)}
+.btn.sm{height:38px; padding:0 12px; font-size:14px}
+.btn:disabled{opacity:.4; cursor:default}
+
+.dock{
+  position:fixed; left:0; right:0; bottom:0; z-index:8; background:var(--surface); border-top:1px solid var(--line);
+  padding:10px max(16px, env(safe-area-inset-right, 0px)) calc(10px + env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px));
+}
+body[data-tab="rank"] .dock{display:none}
+.dock-head{display:flex; align-items:center; gap:8px; margin-bottom:10px}
+.dock-who{flex:1; min-width:0}
+.dock-who b{display:block; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+.dock-score{font:700 22px/1 var(--font-display); font-variant-numeric:tabular-nums; padding-right:4px}
+.chips{display:grid; grid-template-columns:repeat(auto-fit, minmax(62px, 1fr)); gap:8px}
+.chip{height:52px; border-radius:12px; border:1.5px solid var(--line); background:var(--bg); font:700 20px var(--font-display); font-variant-numeric:tabular-nums; cursor:pointer}
+.chip.plus{color:var(--accent-ink); border-color:var(--accent)}
+.chip.minus{color:var(--neg)}
+.chip:active:not(:disabled){transform:scale(.96)}
+.chip:disabled{opacity:.4; cursor:default}
+
+.overlay{position:fixed; inset:0; z-index:20; background:rgba(8,12,17,.55); display:flex; align-items:flex-end}
+.overlay[hidden]{display:none}
+.sheet{
+  width:100%; max-height:90vh; max-height:90dvh; overflow:auto; background:var(--surface); border-radius:18px 18px 0 0; display:grid; gap:16px;
+  padding:18px max(16px, env(safe-area-inset-right, 0px)) calc(18px + env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px));
+}
+.sheet h2{margin:0; font:700 20px var(--font-display)}
+.field{display:grid; gap:6px}
+.field > span, .label{font-size:12px; font-weight:600; letter-spacing:.06em; text-transform:uppercase; color:var(--muted)}
+.field input{width:100%; flex:none}
+.inc-list{display:flex; flex-wrap:wrap; gap:8px}
+.inc{display:inline-flex; align-items:center; gap:2px; padding:2px 2px 2px 12px; border-radius:999px; background:var(--surface-2); font:700 16px var(--font-display)}
+.inc button{width:32px; height:32px; border:0; border-radius:50%; background:transparent; color:var(--muted); font-size:18px; cursor:pointer}
+.inline{display:flex; gap:8px}
+.msg{margin:0; min-height:1.2em; font-size:13px; color:var(--muted)}
+.stack{display:grid; gap:8px}
+.foot{font-size:13px; color:var(--muted); margin:0}
+
+@media (prefers-reduced-motion: reduce){ *{transition:none !important} }
+</style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="mast-row">
+    <div class="mast-title">
+      <h1 id="title">Tally Board</h1>
+      <p class="sub" id="count"></p>
+    </div>
+    <button class="icon-btn" id="btnSettings" type="button" aria-label="Settings">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></svg>
+    </button>
+  </div>
+  <div class="tabs" role="tablist">
+    <button role="tab" id="tabScore" type="button" aria-selected="true">Score</button>
+    <button role="tab" id="tabRank" type="button" aria-selected="false">Ranking</button>
+  </div>
+</header>
+
+<main>
+  <div id="note"></div>
+  <div class="rows" id="rows"></div>
+  <form class="add" id="addForm" autocomplete="off">
+    <input type="text" id="addIn" maxlength="200" placeholder="Add players, separated by commas" aria-label="Add players">
+    <button class="btn" id="addBtn" type="submit">Add</button>
+  </form>
+  <p class="msg" id="addMsg" aria-live="polite"></p>
+</main>
+
+<section class="dock" id="dock" aria-label="Scoring"></section>
+
+<div class="overlay" id="overlay" hidden>
+  <section class="sheet" id="sheet" role="dialog" aria-modal="true" aria-label="Details" tabindex="-1"></section>
+</div>
+
+<script>
+(function(){
+  var MAX = 20, MAX_INC = 8, DEFAULT_INCS = [-5, -1, 1, 5, 10], LS_KEY = "tally-board-v1";
+  var $ = function(id){ return document.getElementById(id); };
+  var uid = function(){ return Math.random().toString(36).slice(2, 9); };
+  var nf = new Intl.NumberFormat(undefined, {maximumFractionDigits: 2});
+  var rnd = function(n){ return Math.round(n * 100) / 100; };
+  var fmt = function(n){ var v = rnd(n); return (v < 0 ? "−" : "") + nf.format(Math.abs(v)); };
+  var fmtSigned = function(n){ return (n > 0 ? "+" : "") + fmt(n); };
+  var parseNum = function(s){ var n = parseFloat(String(s).replace("−", "-")); return isFinite(n) ? n : null; };
+  var ordinal = function(n){ var s = ["th","st","nd","rd"], v = n % 100; return n + (s[(v - 20) % 10] || s[v] || s[0]); };
+  var uniqSort = function(a){ return a.filter(function(x, i){ return a.indexOf(x) === i; }).sort(function(x, y){ return x - y; }); };
+
+  function h(tag, props){
+    var e = document.createElement(tag), p = props || {};
+    Object.keys(p).forEach(function(k){
+      var v = p[k];
+      if (k === "class") e.className = v;
+      else if (k.slice(0, 2) === "on") e.addEventListener(k.slice(2), v);
+      else if (v === true) e.setAttribute(k, "");
+      else if (v !== false && v != null) e.setAttribute(k, v);
+    });
+    Array.prototype.slice.call(arguments, 2).reduce(function(a, c){ return a.concat(c); }, []).forEach(function(c){
+      if (c == null || c === false) return;
+      e.append(c.nodeType ? c : document.createTextNode(c));
+    });
+    return e;
+  }
+
+  function sampleState(){
+    return {
+      v: 1, title: "Game night", sample: true, incs: DEFAULT_INCS.slice(),
+      players: [["Dana", 42], ["Marcus", 37], ["Priya", 37], ["Theo", 21], ["Lena", 8], ["Sam", -4]]
+        .map(function(a){ return {id: uid(), name: a[0], score: a[1]}; })
+    };
+  }
+
+  var state = sampleState(), tab = "score", selectedId = null, undoStack = [];
+
+  function snapshot(){
+    return {
+      v: 1, title: state.title, sample: !!state.sample, incs: state.incs,
+      players: state.players.map(function(p){ return {id: p.id, name: p.name, score: p.score}; })
+    };
+  }
+  function normalize(raw){
+    if (!raw || typeof raw !== "object") return null;
+    var incs = Array.isArray(raw.incs) ? raw.incs.map(Number).filter(function(n){ return isFinite(n) && n !== 0; }) : [];
+    var players = Array.isArray(raw.players) ? raw.players.slice(0, MAX).map(function(p){
+      return {id: String(p.id || uid()), name: String(p.name || "Player").slice(0, 24), score: isFinite(+p.score) ? +p.score : 0};
+    }) : [];
+    return {
+      v: 1, title: String(raw.title || "Game night").slice(0, 30), sample: !!raw.sample,
+      incs: incs.length ? uniqSort(incs).slice(0, MAX_INC) : DEFAULT_INCS.slice(), players: players
+    };
+  }
+
+  var saveTimer = 0;
+  function flush(){
+    clearTimeout(saveTimer); saveTimer = 0;
+    try { localStorage.setItem(LS_KEY, JSON.stringify(snapshot())); } catch (e) {}
+  }
+  function save(){ clearTimeout(saveTimer); saveTimer = setTimeout(flush, 200); }
+  window.addEventListener("pagehide", flush);
+  document.addEventListener("visibilitychange", function(){ if (document.visibilityState === "hidden") flush(); });
+
+  function compute(){
+    var list = state.players.slice().sort(function(a, b){ return b.score - a.score; });
+    var rank = new Map(), ties = new Map(), prev = null, r = 0;
+    list.forEach(function(p, i){ if (p.score !== prev){ r = i + 1; prev = p.score; } rank.set(p.id, r); ties.set(r, (ties.get(r) || 0) + 1); });
+    var scores = state.players.map(function(p){ return p.score; });
+    var lo = Math.min.apply(null, [0].concat(scores)), hi = Math.max.apply(null, [0].concat(scores));
+    var span = (hi - lo) || 1;
+    return {list: list, rank: rank, ties: ties, lo: lo, span: span, zero: (-lo / span) * 100, lead: list.length ? list[0].score : 0};
+  }
+
+  function buildRow(p, c, mode){
+    var r = c.rank.get(p.id), tied = c.ties.get(r) > 1, isScore = mode === "score", sel = isScore && p.id === selectedId;
+    var meta = "";
+    if (!isScore && c.list.length > 1){
+      meta = r === 1
+        ? (tied ? "Tied for 1st" : fmt(p.score - c.list[1].score) + " ahead of " + ordinal(2))
+        : fmt(c.lead - p.score) + " behind 1st" + (tied ? " · tied" : "");
+    }
+    var fill = h("span", {class: "fill" + (p.score < 0 ? " neg" : "")});
+    var left = p.score >= 0 ? c.zero : (p.score - c.lo) / c.span * 100;
+    var width = Math.abs(p.score) / c.span * 100;
+    fill.style.left = left + "%"; fill.style.width = width + "%";
+    if (p.score !== 0) fill.style.minWidth = "4px";
+    var track = h("span", {class: "track"}, fill, c.lo < 0 ? (function(){ var z = h("span", {class: "zero"}); z.style.left = c.zero + "%"; return z; })() : null);
+    var props = {class: "row" + (sel ? " sel" : "") + (r === 1 ? " lead" : "")};
+    if (isScore){
+      props.type = "button"; props["aria-pressed"] = String(sel);
+      props.onclick = function(){ selectedId = p.id; render(); };
+    }
+    return h(isScore ? "button" : "div", props,
+      h("span", {class: "rank"}, String(r)),
+      h("span", {class: "body"}, h("span", {class: "name"}, p.name), meta ? h("span", {class: "meta"}, meta) : null, track),
+      h("span", {class: "score" + (p.score < 0 ? " negv" : "")}, fmt(p.score)));
+  }
+
+  function pushUndo(){ undoStack.push(JSON.stringify(state.players)); if (undoStack.length > 40) undoStack.shift(); }
+  function undo(){
+    var s = undoStack.pop(); if (!s) return;
+    state.players = JSON.parse(s);
+    if (!state.players.some(function(p){ return p.id === selectedId; })) selectedId = null;
+    render(); save();
+  }
+  function bump(d){
+    var p = state.players.find(function(x){ return x.id === selectedId; }); if (!p) return;
+    pushUndo(); p.score = rnd(p.score + d); render(); save();
+  }
+
+  var rowsEl = $("rows"), dock = $("dock"), noteEl = $("note");
+
+  function render(){
+    document.body.dataset.tab = tab;
+    $("tabScore").setAttribute("aria-selected", String(tab === "score"));
+    $("tabRank").setAttribute("aria-selected", String(tab === "rank"));
+    $("title").textContent = state.title || "Tally Board";
+    $("count").textContent = state.players.length + " of " + MAX + " players";
+    var full = state.players.length >= MAX;
+    $("addIn").disabled = full; $("addBtn").disabled = full;
+    $("addIn").placeholder = full ? "Player limit reached (" + MAX + ")" : "Add players, separated by commas";
+
+    noteEl.replaceChildren();
+    if (state.sample && tab === "score"){
+      noteEl.append(h("div", {class: "note"},
+        h("span", {}, "Sample game. Adding a player starts your own."),
+        h("button", {class: "btn sm", type: "button", onclick: function(){ clearSample(); }}, "Clear sample")));
+    }
+
+    var c = compute();
+    rowsEl.className = "rows" + (tab === "rank" ? " big" : "");
+    var items;
+    if (!state.players.length){
+      items = [h("p", {class: "empty"}, tab === "score" ? "No players yet. Add up to " + MAX + " below, separated by commas." : "Add players on the Score tab to see the ranking.")];
+    } else if (tab === "score"){
+      items = state.players.map(function(p){ return buildRow(p, c, "score"); });
+    } else {
+      items = c.list.map(function(p){ return buildRow(p, c, "rank"); });
+    }
+    rowsEl.replaceChildren.apply(rowsEl, items);
+    renderDock();
+  }
+
+  function renderDock(){
+    var p = state.players.find(function(x){ return x.id === selectedId; });
+    dock.replaceChildren(
+      h("div", {class: "dock-head"},
+        h("div", {class: "dock-who"},
+          h("b", {}, p ? p.name : "No player selected"),
+          h("span", {class: "meta"}, p ? "Tap an amount to score" : "Tap a player above")),
+        p ? h("span", {class: "dock-score"}, fmt(p.score)) : null,
+        h("button", {class: "btn ghost sm", type: "button", onclick: undo, disabled: !undoStack.length}, "Undo"),
+        h("button", {class: "btn ghost sm", type: "button", onclick: function(){ openEdit(p.id); }, disabled: !p}, "Edit")),
+      h("div", {class: "chips"}, state.incs.map(function(d){
+        return h("button", {class: "chip " + (d > 0 ? "plus" : "minus"), type: "button", disabled: !p, onclick: function(){ bump(d); }}, fmtSigned(d));
+      })));
+  }
+
+  function clearSample(){
+    state.players = []; state.sample = false; selectedId = null; undoStack = [];
+    render(); save();
+  }
+
+  $("addForm").addEventListener("submit", function(e){
+    e.preventDefault();
+    var names = $("addIn").value.split(/[,\n]/).map(function(s){ return s.trim(); }).filter(Boolean);
+    if (!names.length) return;
+    if (state.sample){ state.players = []; state.sample = false; undoStack = []; selectedId = null; }
+    var take = names.slice(0, MAX - state.players.length);
+    pushUndo();
+    var added = take.map(function(n){ return {id: uid(), name: n.slice(0, 24), score: 0}; });
+    state.players = state.players.concat(added);
+    if (added.length) selectedId = added[0].id;
+    $("addMsg").textContent = names.length > take.length ? "Added " + take.length + ". The limit is " + MAX + " players." : "";
+    $("addIn").value = "";
+    render(); save();
+  });
+
+  $("tabScore").addEventListener("click", function(){ tab = "score"; render(); });
+  $("tabRank").addEventListener("click", function(){ tab = "rank"; render(); });
+  $("btnSettings").addEventListener("click", openSettings);
+
+  /* Sheets */
+  var overlay = $("overlay"), sheet = $("sheet"), onSheetClose = null, lastFocus = null;
+  function openSheet(label, nodes, onClose){
+    lastFocus = document.activeElement; onSheetClose = onClose || null;
+    sheet.setAttribute("aria-label", label);
+    sheet.replaceChildren.apply(sheet, nodes);
+    overlay.hidden = false; sheet.scrollTop = 0; sheet.focus();
+  }
+  function closeSheet(){
+    if (overlay.hidden) return;
+    var fn = onSheetClose; onSheetClose = null;
+    if (fn) fn();
+    overlay.hidden = true; sheet.replaceChildren();
+    render();
+    if (lastFocus && lastFocus.focus) { try { lastFocus.focus(); } catch (e) {} }
+  }
+  overlay.addEventListener("click", function(e){ if (e.target === overlay) closeSheet(); });
+  document.addEventListener("keydown", function(e){ if (e.key === "Escape") closeSheet(); });
+
+  function confirmBtn(label, confirmLabel, fn){
+    var armed = false, t = 0;
+    var b = h("button", {type: "button", class: "btn ghost", onclick: function(){
+      if (!armed){
+        armed = true; b.textContent = confirmLabel; b.classList.add("danger");
+        t = setTimeout(function(){ armed = false; b.textContent = label; b.classList.remove("danger"); }, 4000);
+      } else { clearTimeout(t); fn(); }
+    }}, label);
+    return b;
+  }
+
+  function openSettings(){
+    var titleIn = h("input", {type: "text", id: "fTitle", maxlength: 30, value: state.title, autocomplete: "off"});
+    titleIn.addEventListener("input", function(){
+      state.title = titleIn.value.trim().slice(0, 30) || "Game night";
+      $("title").textContent = state.title; save();
+    });
+    var incWrap = h("div", {class: "inc-list"}), incMsg = h("p", {class: "msg", "aria-live": "polite"});
+    function drawIncs(){
+      incWrap.replaceChildren.apply(incWrap, state.incs.map(function(d){
+        return h("span", {class: "inc"}, h("span", {}, fmtSigned(d)),
+          h("button", {type: "button", "aria-label": "Remove " + fmtSigned(d), onclick: function(){
+            if (state.incs.length <= 1){ incMsg.textContent = "Keep at least one amount."; return; }
+            state.incs = state.incs.filter(function(x){ return x !== d; });
+            incMsg.textContent = ""; drawIncs(); renderDock(); save();
+          }}, "×"));
+      }));
+    }
+    drawIncs();
+    var incIn = h("input", {type: "number", step: "any", id: "fInc", placeholder: "e.g. 3 or -2", "aria-label": "New amount"});
+    var incForm = h("form", {class: "inline", autocomplete: "off"}, incIn, h("button", {class: "btn", type: "submit"}, "Add"));
+    incForm.addEventListener("submit", function(e){
+      e.preventDefault();
+      var n = parseNum(incIn.value);
+      if (n === null || n === 0){ incMsg.textContent = "Enter a number other than 0."; return; }
+      n = rnd(n);
+      if (state.incs.indexOf(n) >= 0){ incMsg.textContent = fmtSigned(n) + " is already in the list."; return; }
+      if (state.incs.length >= MAX_INC){ incMsg.textContent = "Up to " + MAX_INC + " amounts. Remove one first."; return; }
+      state.incs = uniqSort(state.incs.concat(n)); incMsg.textContent = "";
+      incIn.value = ""; drawIncs(); renderDock(); save(); incIn.focus();
+    });
+    openSheet("Settings", [
+      h("h2", {}, "Settings"),
+      h("label", {class: "field", for: "fTitle"}, h("span", {}, "Game name"), titleIn),
+      h("div", {class: "stack"}, h("span", {class: "label"}, "Scoring amounts"), incWrap, incForm, incMsg,
+        h("button", {class: "btn ghost", type: "button", onclick: function(){ state.incs = DEFAULT_INCS.slice(); incMsg.textContent = ""; drawIncs(); renderDock(); save(); }}, "Use default amounts")),
+      h("div", {class: "stack"}, h("span", {class: "label"}, "Game"),
+        confirmBtn("Reset all scores to 0", "Tap again to reset", function(){ pushUndo(); state.players.forEach(function(p){ p.score = 0; }); save(); closeSheet(); }),
+        confirmBtn("Remove all players", "Tap again to remove all", function(){ pushUndo(); state.players = []; state.sample = false; selectedId = null; save(); closeSheet(); })),
+      h("p", {class: "foot"}, "Scores save on this phone only. Clearing Safari website data removes them."),
+      h("button", {class: "btn", type: "button", onclick: closeSheet}, "Done")
+    ]);
+  }
+
+  function openEdit(id){
+    var p = state.players.find(function(x){ return x.id === id; }); if (!p) return;
+    var nameIn = h("input", {type: "text", id: "fName", maxlength: 24, value: p.name, autocomplete: "off"});
+    var scoreIn = h("input", {type: "number", step: "any", id: "fScore", value: String(p.score)});
+    var apply = function(){
+      var nm = nameIn.value.trim().slice(0, 24), sc = parseNum(scoreIn.value);
+      var nameChanged = nm && nm !== p.name, scoreChanged = sc !== null && rnd(sc) !== p.score;
+      if (!nameChanged && !scoreChanged) return;
+      pushUndo();
+      if (nameChanged) p.name = nm;
+      if (scoreChanged) p.score = rnd(sc);
+      save();
+    };
+    openSheet("Edit " + p.name, [
+      h("h2", {}, "Edit player"),
+      h("label", {class: "field", for: "fName"}, h("span", {}, "Name"), nameIn),
+      h("label", {class: "field", for: "fScore"}, h("span", {}, "Set score"), scoreIn),
+      confirmBtn("Remove player", "Tap again to remove", function(){
+        pushUndo(); state.players = state.players.filter(function(x){ return x.id !== id; });
+        selectedId = null; onSheetClose = null; save(); closeSheet();
+      }),
+      h("button", {class: "btn", type: "button", onclick: closeSheet}, "Done")
+    ], apply);
+  }
+
+  if (typeof ResizeObserver !== "undefined"){
+    new ResizeObserver(function(){ document.documentElement.style.setProperty("--dock-h", dock.offsetHeight + "px"); }).observe(dock);
+  }
+
+  try {
+    var raw = localStorage.getItem(LS_KEY);
+    var n = raw ? normalize(JSON.parse(raw)) : null;
+    if (n) state = n;
+  } catch (e) {}
+  render();
+
+  if ("serviceWorker" in navigator){
+    window.addEventListener("load", function(){ navigator.serviceWorker.register("sw.js").catch(function(){}); });
+  }
+})();
+</script>
+</body>
+</html>

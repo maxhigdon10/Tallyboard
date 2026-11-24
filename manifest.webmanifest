@@ -1,0 +1,15 @@
+{
+  "name": "Tally Board",
+  "short_name": "Tally",
+  "description": "Scorekeeper for up to 20 players with custom scoring amounts and live rankings.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0E1217",
+  "theme_color": "#0E1217",
+  "icons": [
+    {"src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any"},
+    {"src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any"}
+  ]
+}
