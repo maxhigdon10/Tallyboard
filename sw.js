@@ -1,5 +1,5 @@
 /* Offline cache for Tally Board. Bump CACHE when you change any file so phones pick up the update. */
-var CACHE = "tally-board-v4";
+var CACHE = "tally-board-v5";
 var ASSETS = ["./", "./index.html", "./manifest.webmanifest", "./icon-180.png", "./icon-192.png", "./icon-512.png"];
 
 self.addEventListener("install", function(e){
