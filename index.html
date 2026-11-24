@@ -18,26 +18,32 @@
 /* Layout: sticky masthead with Score / Ranking tabs, one list of bar rows, a fixed scoring dock at the bottom (Score tab only). Scoreboard amber on graphite. */
 :root{
   --bg:#EDF0F3; --surface:#FFFFFF; --surface-2:#E1E6EC; --fg:#141A21; --muted:#59636F; --line:#D2D9E1;
-  --accent:#D9480F; --accent-ink:#B23A08; --on-accent:#FFFFFF; --bar:#AEBAC7; --neg:#C0392B; --on-neg:#FFFFFF; --note:#FBE6DA;
+  --accent:#D9480F; --accent-ink:#B23A08; --on-accent:#FFFFFF; --bar:#AEBAC7; --neg:#C0392B; --on-neg:#FFFFFF; --note:#FBE6DA; --pl:36%; --pc-ink:#FFFFFF;
   --font-display:ui-rounded,"SF Pro Rounded",-apple-system,system-ui,sans-serif;
   --font-body:-apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,"Segoe UI",sans-serif;
   color-scheme:light;
 }
 @media (prefers-color-scheme: dark){
-  :root{
+  :root:not([data-theme="light"]){
     --bg:#0E1217; --surface:#171D25; --surface-2:#232C37; --fg:#ECF0F4; --muted:#9AA5B1; --line:#2C3642;
-    --accent:#FF8A3D; --accent-ink:#FF9E5E; --on-accent:#1B1108; --bar:#46546A; --neg:#FF7A6B; --on-neg:#26090A; --note:#2A1C12;
+    --accent:#FF8A3D; --accent-ink:#FF9E5E; --on-accent:#1B1108; --bar:#46546A; --neg:#FF7A6B; --on-neg:#26090A; --note:#2A1C12; --pl:62%; --pc-ink:#10151B;
     color-scheme:dark;
   }
+}
+:root[data-theme="dark"]{
+  --bg:#0E1217; --surface:#171D25; --surface-2:#232C37; --fg:#ECF0F4; --muted:#9AA5B1; --line:#2C3642;
+  --accent:#FF8A3D; --accent-ink:#FF9E5E; --on-accent:#1B1108; --bar:#46546A; --neg:#FF7A6B; --on-neg:#26090A; --note:#2A1C12; --pl:62%; --pc-ink:#10151B;
+  color-scheme:dark;
 }
 *{box-sizing:border-box}
 html,body{margin:0}
 html{background:var(--bg)}
+[hidden]{display:none!important}
 body{
-  background:var(--bg); color:var(--fg); font-family:var(--font-body); font-size:15px; line-height:1.4; min-height:100vh;
-  padding-top:env(safe-area-inset-top, 0px);
+  background:var(--bg); color:var(--fg); font-family:var(--font-body); font-size:15px; line-height:1.4;
   padding-left:max(16px, env(safe-area-inset-left, 0px));
   padding-right:max(16px, env(safe-area-inset-right, 0px));
+  min-height:100vh; padding-top:env(safe-area-inset-top, 0px);
   -webkit-text-size-adjust:100%; -webkit-tap-highlight-color:transparent;
 }
 body::before{content:""; position:fixed; inset:0 0 auto; height:env(safe-area-inset-top, 0px); background:var(--bg); z-index:10}
@@ -59,8 +65,8 @@ body[data-tab="rank"] main{padding-bottom:calc(32px + env(safe-area-inset-bottom
 
 .rows{display:grid; gap:8px}
 .row{
-  appearance:none; -webkit-appearance:none; width:100%; text-align:left; background:var(--surface); border:1.5px solid transparent; border-radius:12px;
-  padding:10px 12px; display:grid; grid-template-columns:26px minmax(0,1fr) auto; column-gap:10px; align-items:center;
+  appearance:none; width:100%; text-align:left; --pc:hsl(var(--h,200) 68% var(--pl)); background:var(--surface); border:1.5px solid transparent; border-radius:12px;
+  padding:10px 12px; display:grid; grid-template-columns:22px 32px minmax(0,1fr) auto; column-gap:10px; align-items:center;
 }
 button.row{cursor:pointer}
 .row.sel{border-color:var(--accent)}
@@ -72,9 +78,8 @@ button.row{cursor:pointer}
 .score.negv{color:var(--neg)}
 .lead .rank, .lead .score:not(.negv){color:var(--accent-ink)}
 .track{position:relative; display:block; height:10px; margin-top:7px; border-radius:5px; background:var(--surface-2); overflow:hidden}
-.fill{position:absolute; top:0; bottom:0; border-radius:5px; background:var(--bar); transition:left .3s ease, width .3s ease}
-.lead .fill{background:var(--accent)}
-.fill.neg{background:var(--neg)}
+.fill{position:absolute; top:0; bottom:0; border-radius:5px; background:var(--pc, var(--bar)); transition:left .6s cubic-bezier(.34,1.25,.64,1), width .6s cubic-bezier(.34,1.25,.64,1)}
+.fill.neg{opacity:.65}
 .zero{position:absolute; top:0; bottom:0; width:2px; background:var(--fg); opacity:.35}
 .big .track{height:22px; border-radius:7px}
 .big .fill{border-radius:7px}
@@ -113,7 +118,6 @@ body[data-tab="rank"] .dock{display:none}
 .chip:disabled{opacity:.4; cursor:default}
 
 .overlay{position:fixed; inset:0; z-index:20; background:rgba(8,12,17,.55); display:flex; align-items:flex-end}
-.overlay[hidden]{display:none}
 .sheet{
   width:100%; max-height:90vh; max-height:90dvh; overflow:auto; background:var(--surface); border-radius:18px 18px 0 0; display:grid; gap:16px;
   padding:18px max(16px, env(safe-area-inset-right, 0px)) calc(18px + env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px));
@@ -130,15 +134,65 @@ body[data-tab="rank"] .dock{display:none}
 .stack{display:grid; gap:8px}
 .foot{font-size:13px; color:var(--muted); margin:0}
 
+.score-cell{text-align:right; min-width:72px}
+.score-cell .score{display:block}
+.pend{display:block; margin-top:3px; font:700 13px var(--font-display); font-variant-numeric:tabular-nums; color:var(--accent-ink); text-align:right}
+.pend.negp{color:var(--neg)}
+.dock-score .pend{margin-top:2px}
+.round-bar{display:grid; grid-template-columns:auto 1fr; gap:8px; margin-top:10px}
 .seg{display:grid; grid-template-columns:1fr 1fr; gap:4px; padding:4px; background:var(--surface-2); border-radius:12px}
 .seg button{height:42px; border:0; border-radius:9px; background:transparent; color:var(--muted); font-weight:600; cursor:pointer}
 .seg button[aria-checked="true"]{background:var(--surface); color:var(--fg)}
+.seg.three{grid-template-columns:1fr 1fr 1fr}
 
-@media (prefers-reduced-motion: reduce){ *{transition:none !important} }
+.av{position:relative; width:32px; height:32px; border-radius:50%; background:var(--pc); color:var(--pc-ink); display:grid; place-items:center; font:700 15px var(--font-display)}
+.crown{position:absolute; top:-9px; left:50%; width:18px; height:14px; margin-left:-9px; transform:rotate(-8deg); color:#F2B705; filter:drop-shadow(0 1px 0 rgba(0,0,0,.3))}
+
+.podium{display:grid; gap:8px; align-items:end; padding:14px 0 6px}
+.pod{--pc:hsl(var(--h,200) 68% var(--pl)); display:grid; justify-items:center; gap:4px; min-width:0}
+.pod .av{width:46px; height:46px; font-size:20px; margin-bottom:2px}
+.pod .crown{width:26px; height:20px; top:-16px; margin-left:-13px}
+.pod-name{max-width:100%; font-weight:600; font-size:14px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+.pod-score{font:700 20px/1 var(--font-display); font-variant-numeric:tabular-nums}
+.pod-score.negv{color:var(--neg)}
+.pod-block{width:100%; border-radius:10px 10px 4px 4px; background:var(--pc); color:var(--pc-ink); display:grid; place-items:center; font:700 24px var(--font-display); transform-origin:bottom; animation:rise .7s cubic-bezier(.34,1.3,.64,1) both}
+@keyframes rise{from{transform:scaleY(.15); opacity:.3}}
+
+.pend.pop{transform-origin:right center; animation:pop .4s cubic-bezier(.34,1.56,.64,1)}
+@keyframes pop{from{transform:scale(.5)}}
+
+.inrow{display:grid; grid-template-columns:minmax(0,1fr) auto; gap:8px; align-items:center}
+.btn.tall{height:60px; min-width:96px; padding:0 14px}
+.dial-wrap{position:relative; min-width:0; height:60px}
+.dial{display:flex; height:60px; overflow-x:auto; scroll-snap-type:x mandatory; -webkit-overflow-scrolling:touch; scrollbar-width:none; overscroll-behavior-x:contain; touch-action:pan-x; background:var(--bg); border:1.5px solid var(--line); border-radius:12px}
+.dial::-webkit-scrollbar{display:none}
+.dial-pad{flex:none; width:calc(50% - 26px)}
+.tick{flex:none; width:52px; scroll-snap-align:center; display:grid; align-content:end; justify-items:center; gap:5px; padding-bottom:7px; font:700 15px var(--font-display); font-variant-numeric:tabular-nums; color:var(--muted); transition:color .15s}
+.tick::before{content:""; width:2px; height:11px; border-radius:1px; background:var(--line)}
+.tick.mj::before{height:19px; background:var(--muted)}
+.tick.on{color:var(--fg)}
+.dial-mark{position:absolute; top:5px; bottom:5px; left:50%; width:3px; margin-left:-1.5px; border-radius:2px; background:var(--accent); pointer-events:none}
+.dial-fade{position:absolute; inset:0; border-radius:12px; pointer-events:none; background:linear-gradient(90deg, var(--bg), transparent 28%, transparent 72%, var(--bg))}
+.slider{-webkit-appearance:none; appearance:none; width:100%; height:44px; margin:0; background:transparent; cursor:pointer}
+.slider::-webkit-slider-runnable-track{height:14px; border-radius:7px; background:var(--trk, var(--surface-2))}
+.slider::-moz-range-track{height:14px; border-radius:7px; background:var(--trk, var(--surface-2))}
+.slider::-webkit-slider-thumb{-webkit-appearance:none; width:34px; height:34px; margin-top:-10px; border-radius:50%; background:var(--surface); border:3px solid var(--accent); box-shadow:0 2px 8px rgba(0,0,0,.3)}
+.slider::-moz-range-thumb{width:28px; height:28px; border-radius:50%; background:var(--surface); border:3px solid var(--accent)}
+
+.scale-row{display:flex; align-items:center; gap:6px; margin-bottom:8px}
+.scale-row .meta{flex:none}
+.scale-row .range{margin-left:auto}
+.sc{height:30px; min-width:44px; padding:0 10px; border-radius:999px; border:1.5px solid var(--line); background:var(--bg); color:var(--muted); font:700 13px var(--font-display); font-variant-numeric:tabular-nums; cursor:pointer}
+.sc[aria-pressed="true"]{background:var(--fg); color:var(--bg); border-color:var(--fg)}
+
+.toast{position:fixed; left:50%; bottom:calc(var(--dock-h, 190px) + 14px); transform:translate(-50%, 12px); z-index:25; max-width:calc(100% - 32px); padding:10px 16px; border-radius:999px; background:var(--fg); color:var(--bg); font-weight:600; font-size:14px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; opacity:0; pointer-events:none; transition:opacity .25s, transform .25s}
+.toast.show{opacity:1; transform:translate(-50%, 0)}
+#fx{position:fixed; inset:0; width:100%; height:100%; pointer-events:none; z-index:30}
+
+@media (prefers-reduced-motion: reduce){ *{transition:none !important; animation:none !important} }
 </style>
 </head>
 <body>
-
 <header class="masthead">
   <div class="mast-row">
     <div class="mast-title">
@@ -166,6 +220,8 @@ body[data-tab="rank"] .dock{display:none}
 </main>
 
 <section class="dock" id="dock" aria-label="Scoring"></section>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<canvas id="fx" aria-hidden="true"></canvas>
 
 <div class="overlay" id="overlay" hidden>
   <section class="sheet" id="sheet" role="dialog" aria-modal="true" aria-label="Details" tabindex="-1"></section>
@@ -202,9 +258,9 @@ body[data-tab="rank"] .dock{display:none}
 
   function sampleState(){
     return {
-      v: 1, title: "Game night", sample: true, lowWins: false, incs: DEFAULT_INCS.slice(),
+      v: 1, title: "Game night", sample: true, lowWins: false, perRound: true, style: "chips", scale: 0, rounds: [], draft: {}, incs: DEFAULT_INCS.slice(),
       players: [["Dana", 42], ["Marcus", 37], ["Priya", 37], ["Theo", 21], ["Lena", 8], ["Sam", -4]]
-        .map(function(a){ return {id: uid(), name: a[0], score: a[1]}; })
+        .map(function(a, i){ return {id: uid(), name: a[0], score: a[1], hue: [16, 205, 285, 145, 340, 48][i]}; })
     };
   }
 
@@ -212,18 +268,33 @@ body[data-tab="rank"] .dock{display:none}
 
   function snapshot(){
     return {
-      v: 1, title: state.title, sample: !!state.sample, lowWins: !!state.lowWins, incs: state.incs,
-      players: state.players.map(function(p){ return {id: p.id, name: p.name, score: p.score}; })
+      v: 1, title: state.title, sample: !!state.sample, lowWins: !!state.lowWins, style: state.style || "chips", scale: state.scale | 0, perRound: state.perRound !== false, rounds: state.rounds, draft: state.draft, incs: state.incs,
+      players: state.players.map(function(p){ return {id: p.id, name: p.name, score: p.score, hue: p.hue}; })
     };
+  }
+  function hashHue(str){ var x = 0; for (var i = 0; i < str.length; i++) x = (x * 31 + str.charCodeAt(i)) % 360; return x; }
+  function nextHue(i){ return Math.round((i * 137.508 + 20) % 360); }
+  function normRounds(r){
+    return Array.isArray(r) ? r.slice(-200).map(function(o){
+      var out = {};
+      if (o && typeof o === "object") Object.keys(o).forEach(function(k){ if (isFinite(+o[k])) out[k] = +o[k]; });
+      return out;
+    }) : [];
+  }
+  function normDraft(d){
+    var out = {};
+    if (d && typeof d === "object") Object.keys(d).forEach(function(k){ var n = +d[k]; if (d[k] !== "" && isFinite(n) && n !== 0) out[k] = n; });
+    return out;
   }
   function normalize(raw){
     if (!raw || typeof raw !== "object") return null;
     var incs = Array.isArray(raw.incs) ? raw.incs.map(Number).filter(function(n){ return isFinite(n) && n !== 0; }) : [];
     var players = Array.isArray(raw.players) ? raw.players.slice(0, MAX).map(function(p){
-      return {id: String(p.id || uid()), name: String(p.name || "Player").slice(0, 24), score: isFinite(+p.score) ? +p.score : 0};
+      var id = String(p.id || uid());
+      return {id: id, name: String(p.name || "Player").slice(0, 24), score: isFinite(+p.score) ? +p.score : 0, hue: isFinite(+p.hue) ? +p.hue : hashHue(id)};
     }) : [];
     return {
-      v: 1, title: String(raw.title || "Game night").slice(0, 30), sample: !!raw.sample, lowWins: !!raw.lowWins,
+      v: 1, title: String(raw.title || "Game night").slice(0, 30), sample: !!raw.sample, lowWins: !!raw.lowWins, perRound: raw.perRound !== false, style: ["chips", "dial", "slider"].indexOf(raw.style) >= 0 ? raw.style : "chips", scale: [0, 1, 2, 3].indexOf(+raw.scale) >= 0 ? +raw.scale : 0, rounds: normRounds(raw.rounds), draft: normDraft(raw.draft),
       incs: incs.length ? uniqSort(incs).slice(0, MAX_INC) : DEFAULT_INCS.slice(), players: players
     };
   }
@@ -245,7 +316,99 @@ body[data-tab="rank"] .dock{display:none}
     var scores = state.players.map(function(p){ return p.score; });
     var lo = Math.min.apply(null, [0].concat(scores)), hi = Math.max.apply(null, [0].concat(scores));
     var span = (hi - lo) || 1;
-    return {list: list, rank: rank, ties: ties, lo: lo, span: span, zero: (-lo / span) * 100, lead: list.length ? list[0].score : 0};
+    return {list: list, rank: rank, ties: ties, lo: lo, span: span, zero: (-lo / span) * 100, lead: list.length ? list[0].score : 0, hasLead: list.length > 1 && list[0].score !== list[list.length - 1].score};
+  }
+
+  var reduce = !!(window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches);
+  var shown = new Map(), barPrev = new Map(), pendingBars = [], popId = null, lastTab = null, animTok = 0, toastT = 0, fxRaf = 0;
+  var dialK = 0, sliderK = 0, dialRef = null;
+
+  function crownEl(){
+    var NS = "http://www.w3.org/2000/svg", sv = document.createElementNS(NS, "svg"), d = document.createElementNS(NS, "path");
+    sv.setAttribute("viewBox", "0 0 24 18"); sv.setAttribute("class", "crown"); sv.setAttribute("aria-hidden", "true");
+    d.setAttribute("d", "M2 16L4 4L9 10L12 2L15 10L20 4L22 16Z"); d.setAttribute("fill", "currentColor");
+    sv.appendChild(d);
+    return sv;
+  }
+  function avatar(p, crown){
+    var ch = Array.from(p.name.trim())[0] || "?";
+    return h("span", {class: "av"}, ch.toUpperCase(), crown ? crownEl() : null);
+  }
+  function leaderKey(){
+    var c = compute();
+    if (c.list.length < 2 || c.list[0].score === c.list[1].score) return null;
+    return c.list[0].id;
+  }
+  function toast(msg){
+    var t = $("toast"); t.textContent = msg; t.classList.add("show");
+    clearTimeout(toastT); toastT = setTimeout(function(){ t.classList.remove("show"); }, 2400);
+  }
+  function burst(hue){
+    if (reduce) return;
+    var cv = $("fx"), dpr = Math.min(window.devicePixelRatio || 1, 2), W = cv.clientWidth, H = cv.clientHeight;
+    cv.width = W * dpr; cv.height = H * dpr;
+    var ctx = cv.getContext("2d"); ctx.scale(dpr, dpr);
+    var cols = [hue, hue + 40, hue + 180, 48, 16, 205].map(function(x){ return "hsl(" + (x % 360) + " 85% 58%)"; });
+    var ps = [], i;
+    for (i = 0; i < 90; i++){
+      var a = -Math.PI / 2 + (Math.random() - 0.5) * 1.9, sp = 6 + Math.random() * 10;
+      ps.push({x: W / 2, y: H * 0.55, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, w: 5 + Math.random() * 6, h: 3 + Math.random() * 4, r: Math.random() * 6, vr: (Math.random() - 0.5) * 0.4, c: cols[i % cols.length]});
+    }
+    cancelAnimationFrame(fxRaf);
+    var start = performance.now(), DUR = 1600;
+    (function frame(now){
+      var el = now - start;
+      ctx.clearRect(0, 0, W, H);
+      ps.forEach(function(q){
+        q.vy += 0.3; q.vx *= 0.99; q.x += q.vx; q.y += q.vy; q.r += q.vr;
+        ctx.save(); ctx.translate(q.x, q.y); ctx.rotate(q.r); ctx.globalAlpha = Math.max(0, 1 - el / DUR);
+        ctx.fillStyle = q.c; ctx.fillRect(-q.w / 2, -q.h / 2, q.w, q.h); ctx.restore();
+      });
+      if (el < DUR) fxRaf = requestAnimationFrame(frame); else ctx.clearRect(0, 0, W, H);
+    })(start);
+  }
+  function afterScore(before){
+    var now = leaderKey();
+    if (!now || !before || now === before) return;
+    var p = state.players.find(function(x){ return x.id === now; });
+    if (!p) return;
+    toast(p.name + " takes the lead"); burst(p.hue);
+  }
+  function animateScores(){
+    var tok = ++animTok, jobs = [];
+    Array.prototype.forEach.call(rowsEl.querySelectorAll("[data-to]"), function(el){
+      var id = el.dataset.id, to = +el.dataset.to, from = shown.has(id) ? shown.get(id) : to;
+      if (from === to || reduce){ el.textContent = fmt(to); shown.set(id, to); }
+      else jobs.push({el: el, id: id, from: from, to: to});
+    });
+    if (!jobs.length) return;
+    var t0 = performance.now(), D = 650;
+    (function step(now){
+      if (tok !== animTok) return;
+      var k = Math.min(1, (now - t0) / D), e = 1 - Math.pow(1 - k, 3);
+      jobs.forEach(function(j){
+        var v = k === 1 ? j.to : j.from + (j.to - j.from) * e;
+        j.el.textContent = fmt(v); shown.set(j.id, v);
+      });
+      if (k < 1) requestAnimationFrame(step);
+    })(t0);
+  }
+
+  function buildPodium(c){
+    var top = c.list.slice(0, 3);
+    if (top.length < 2) return null;
+    var order = top.length === 3 ? [1, 0, 2] : [1, 0], hs = [92, 66, 50];
+    var wrap = h("div", {class: "podium"});
+    wrap.style.gridTemplateColumns = "repeat(" + order.length + ", minmax(0, 1fr))";
+    order.forEach(function(i){
+      var p = top[i], r = c.rank.get(p.id), blk = h("div", {class: "pod-block"}, String(r));
+      blk.style.height = hs[i] + "px";
+      var col = h("div", {class: "pod"}, avatar(p, r === 1 && c.hasLead), h("span", {class: "pod-name"}, p.name),
+        h("span", {class: "pod-score" + (p.score < 0 ? " negv" : "")}, fmt(p.score)), blk);
+      col.style.setProperty("--h", String(p.hue));
+      wrap.appendChild(col);
+    });
+    return wrap;
   }
 
   function buildRow(p, c, mode){
@@ -259,30 +422,43 @@ body[data-tab="rank"] .dock{display:none}
     var fill = h("span", {class: "fill" + (p.score < 0 ? " neg" : "")});
     var left = p.score >= 0 ? c.zero : (p.score - c.lo) / c.span * 100;
     var width = Math.abs(p.score) / c.span * 100;
-    fill.style.left = left + "%"; fill.style.width = width + "%";
+    var prev = barPrev.get(p.id) || {left: c.zero, width: 0};
+    fill.style.left = prev.left + "%"; fill.style.width = prev.width + "%";
+    pendingBars.push([fill, left, width]); barPrev.set(p.id, {left: left, width: width});
     if (p.score !== 0) fill.style.minWidth = "4px";
     var track = h("span", {class: "track"}, fill, c.lo < 0 ? (function(){ var z = h("span", {class: "zero"}); z.style.left = c.zero + "%"; return z; })() : null);
-    var props = {class: "row" + (sel ? " sel" : "") + (r === 1 ? " lead" : "")};
+    var from = shown.has(p.id) ? shown.get(p.id) : p.score;
+    var scoreEl = h("span", {class: "score" + (p.score < 0 ? " negv" : "")}, fmt(from));
+    scoreEl.dataset.to = String(p.score); scoreEl.dataset.id = p.id;
+    var props = {class: "row" + (sel ? " sel" : "") + (r === 1 && c.hasLead ? " lead" : "")};
     if (isScore){
       props.type = "button"; props["aria-pressed"] = String(sel);
       props.onclick = function(){ selectedId = p.id; render(); };
     }
-    return h(isScore ? "button" : "div", props,
+    var el = h(isScore ? "button" : "div", props,
       h("span", {class: "rank"}, String(r)),
+      avatar(p, r === 1 && c.hasLead),
       h("span", {class: "body"}, h("span", {class: "name"}, p.name), meta ? h("span", {class: "meta"}, meta) : null, track),
-      h("span", {class: "score" + (p.score < 0 ? " negv" : "")}, fmt(p.score)));
+      h("span", {class: "score-cell"}, scoreEl, isScore ? pendEl(p) : null));
+    el.style.setProperty("--h", String(p.hue)); el.dataset.id = p.id;
+    return el;
   }
 
-  function pushUndo(){ undoStack.push(JSON.stringify(state.players)); if (undoStack.length > 40) undoStack.shift(); }
+  function pushUndo(){ undoStack.push(JSON.stringify({p: state.players, r: state.rounds, d: state.draft})); if (undoStack.length > 40) undoStack.shift(); }
   function undo(){
     var s = undoStack.pop(); if (!s) return;
-    state.players = JSON.parse(s);
+    var o = JSON.parse(s); state.players = o.p; state.rounds = o.r || []; state.draft = o.d || {};
     if (!state.players.some(function(p){ return p.id === selectedId; })) selectedId = null;
     render(); save();
   }
   function bump(d){
     var p = state.players.find(function(x){ return x.id === selectedId; }); if (!p) return;
-    pushUndo(); p.score = rnd(p.score + d); render(); save();
+    var before = leaderKey(); pushUndo(); roundMsg = ""; popId = p.id;
+    if (state.perRound){
+      var v = rnd((state.draft[p.id] || 0) + d);
+      if (v === 0) delete state.draft[p.id]; else state.draft[p.id] = v;
+    } else { p.score = rnd(p.score + d); }
+    render(); save(); afterScore(before);
   }
 
   var rowsEl = $("rows"), dock = $("dock"), noteEl = $("note");
@@ -306,35 +482,175 @@ body[data-tab="rank"] .dock{display:none}
 
     var c = compute();
     rowsEl.className = "rows" + (tab === "rank" ? " big" : "");
+    var oldTops = null;
+    if (tab === "rank" && lastTab === "rank"){
+      oldTops = new Map();
+      Array.prototype.forEach.call(rowsEl.children, function(el){ if (el.dataset.id) oldTops.set(el.dataset.id, el.getBoundingClientRect().top); });
+    }
+    pendingBars = [];
     var items;
     if (!state.players.length){
-      items = [h("p", {class: "empty"}, tab === "score" ? "No players yet. Add up to " + MAX + " below, separated by commas." : "Add players on the Score tab to see the ranking.")];
+      items = [h("p", {class: "empty"}, tab === "rank" ? "Add players on the Score tab to see the ranking." : "No players yet. Add up to " + MAX + " below, separated by commas.")];
     } else if (tab === "score"){
       items = state.players.map(function(p){ return buildRow(p, c, "score"); });
     } else {
-      items = c.list.map(function(p){ return buildRow(p, c, "rank"); });
+      items = [buildPodium(c)].concat(c.list.map(function(p){ return buildRow(p, c, "rank"); })).filter(Boolean);
     }
     rowsEl.replaceChildren.apply(rowsEl, items);
+    void rowsEl.offsetWidth;
+    pendingBars.forEach(function(b){ b[0].style.left = b[1] + "%"; b[0].style.width = b[2] + "%"; });
+    pendingBars = [];
+    animateScores();
+    if (oldTops && !reduce){
+      Array.prototype.forEach.call(rowsEl.children, function(el){
+        var id = el.dataset.id; if (!id || !oldTops.has(id) || !el.animate) return;
+        var dy = oldTops.get(id) - el.getBoundingClientRect().top;
+        if (Math.abs(dy) > 1) el.animate([{transform: "translateY(" + dy + "px)"}, {transform: "none"}], {duration: 450, easing: "cubic-bezier(.2,.8,.2,1)"});
+      });
+    }
+    lastTab = tab;
     renderDock();
+    popId = null;
+  }
+
+  var SCALES = [1, 10, 100, 1000], LIMIT = 10000;
+  function compact(n){ var a = Math.abs(n); return a >= 1000 ? nf.format(rnd(a / 1000)) + "k" : fmt(a); }
+  function sCompact(n){ return n === 0 ? "0" : (n < 0 ? "−" : "+") + compact(n); }
+  function dialSpec(maxN){
+    var abs = state.incs.map(Math.abs), base = Math.min.apply(null, abs) || 1;
+    var avail = SCALES.filter(function(m){ return base * m <= LIMIT; });
+    if (!avail.length) avail = [1];
+    var si = Math.max(0, Math.min(avail.length - 1, state.scale | 0)), step = rnd(base * avail[si]);
+    return {step: step, N: Math.max(1, Math.min(maxN, Math.floor(LIMIT / step))), si: si,
+      avail: avail.map(function(m){ return rnd(base * m); })};
+  }
+  function scaleRow(sp){
+    return h("div", {class: "scale-row"}, h("span", {class: "meta"}, "Step"),
+      sp.avail.map(function(st, i){
+        return h("button", {class: "sc", type: "button", "aria-pressed": String(i === sp.si), onclick: function(){
+          state.scale = i; dialK = 0; sliderK = 0; renderDock(); save();
+        }}, compact(st));
+      }),
+      h("span", {class: "meta range"}, "Up to ±" + compact(sp.N * sp.step)));
+  }
+
+  function dialInput(p, sp){
+    var N = sp.N, TICK = 52, ticks = [], MJ = N >= 50 ? 10 : 5;
+    dialK = Math.max(-N, Math.min(N, dialK));
+    var el = h("div", {class: "dial", role: "slider", tabindex: "0", "aria-label": "Amount to add",
+      "aria-valuemin": String(rnd(-N * sp.step)), "aria-valuemax": String(rnd(N * sp.step))});
+    el.appendChild(h("span", {class: "dial-pad"}));
+    for (var k = -N; k <= N; k++){
+      var t = h("span", {class: "tick" + (k % MJ === 0 ? " mj" : "")}, sCompact(rnd(k * sp.step)));
+      ticks.push(t); el.appendChild(t);
+    }
+    el.appendChild(h("span", {class: "dial-pad"}));
+    var btn = h("button", {class: "btn tall", type: "button", onclick: function(){ if (dialK) bump(rnd(dialK * sp.step)); }});
+    var on = null;
+    function paint(){
+      var v = rnd(dialK * sp.step);
+      if (on) on.classList.remove("on");
+      on = ticks[dialK + N]; on.classList.add("on");
+      btn.textContent = v ? "Add " + fmtSigned(v) : "Spin it";
+      btn.disabled = !p || !v;
+      el.setAttribute("aria-valuenow", String(v)); el.setAttribute("aria-valuetext", fmtSigned(v));
+    }
+    paint();
+    var raf = 0;
+    el.addEventListener("scroll", function(){
+      if (raf) return;
+      raf = requestAnimationFrame(function(){
+        raf = 0;
+        var kk = Math.max(-N, Math.min(N, Math.round(el.scrollLeft / TICK) - N));
+        if (kk !== dialK){ dialK = kk; paint(); if (navigator.vibrate) { try { navigator.vibrate(6); } catch (e) {} } }
+      });
+    });
+    el.addEventListener("keydown", function(e){
+      var d = e.key === "ArrowLeft" ? -1 : e.key === "ArrowRight" ? 1 : 0;
+      if (!d) return;
+      e.preventDefault(); dialK = Math.max(-N, Math.min(N, dialK + d)); el.scrollLeft = (dialK + N) * TICK; paint();
+    });
+    dialRef = {el: el, left: (dialK + N) * TICK};
+    return h("div", {class: "inrow"}, h("div", {class: "dial-wrap"}, el, h("span", {class: "dial-mark"}), h("span", {class: "dial-fade"})), btn);
+  }
+
+  function sliderInput(p, sp){
+    var N = sp.N;
+    sliderK = Math.max(-N, Math.min(N, sliderK));
+    var inp = h("input", {type: "range", class: "slider", id: "amtSlider", min: String(-N), max: String(N), step: "1", value: String(sliderK), "aria-label": "Amount to add"});
+    var btn = h("button", {class: "btn tall", type: "button", onclick: function(){
+      var kk = +inp.value; if (!kk) return;
+      sliderK = 0; bump(rnd(kk * sp.step));
+    }});
+    function paint(){
+      var kk = +inp.value, v = rnd(kk * sp.step);
+      sliderK = kk;
+      btn.textContent = v ? "Add " + fmtSigned(v) : "Drag it"; btn.disabled = !p || !v;
+      inp.setAttribute("aria-valuetext", fmtSigned(v));
+      var pct = (kk + N) / (2 * N) * 100, col = kk < 0 ? "var(--neg)" : "var(--accent)";
+      inp.style.setProperty("--trk", kk >= 0
+        ? "linear-gradient(90deg, var(--surface-2) 50%, " + col + " 50%, " + col + " " + pct + "%, var(--surface-2) " + pct + "%)"
+        : "linear-gradient(90deg, var(--surface-2) " + pct + "%, " + col + " " + pct + "%, " + col + " 50%, var(--surface-2) 50%)");
+    }
+    inp.addEventListener("input", paint); paint();
+    return h("div", {class: "inrow"}, inp, btn);
   }
 
   function renderDock(){
     var p = state.players.find(function(x){ return x.id === selectedId; });
+    var input, sc = null;
+    dialRef = null;
+    if (state.style === "dial"){ var spd = dialSpec(100); input = dialInput(p, spd); sc = scaleRow(spd); }
+    else if (state.style === "slider"){ var sps = dialSpec(50); input = sliderInput(p, sps); sc = scaleRow(sps); }
+    else input = h("div", {class: "chips"}, state.incs.map(function(d){
+      return h("button", {class: "chip " + (d > 0 ? "plus" : "minus"), type: "button", disabled: !p, onclick: function(){ bump(d); }}, fmtSigned(d));
+    }));
     dock.replaceChildren(
       h("div", {class: "dock-head"},
         h("div", {class: "dock-who"},
           h("b", {}, p ? p.name : "No player selected"),
-          h("span", {class: "meta"}, p ? "Tap an amount to score" : "Tap a player above")),
-        p ? h("span", {class: "dock-score"}, fmt(p.score)) : null,
+          h("span", {class: "meta"}, p ? (state.perRound ? "Tap amounts to add to this round" : "Tap an amount to score") : "Tap a player above")),
+        p ? h("span", {class: "dock-score"}, fmt(p.score), pendEl(p)) : null,
         h("button", {class: "btn ghost sm", type: "button", onclick: undo, disabled: !undoStack.length}, "Undo"),
         h("button", {class: "btn ghost sm", type: "button", onclick: function(){ openEdit(p.id); }, disabled: !p}, "Edit")),
-      h("div", {class: "chips"}, state.incs.map(function(d){
-        return h("button", {class: "chip " + (d > 0 ? "plus" : "minus"), type: "button", disabled: !p, onclick: function(){ bump(d); }}, fmtSigned(d));
-      })));
+      sc,
+      input,
+      state.perRound ? roundBar() : null);
+    if (dialRef) dialRef.el.scrollLeft = dialRef.left;
+  }
+
+  var roundMsg = "";
+  function pendEl(p){
+    var v = state.perRound ? state.draft[p.id] : 0;
+    if (!v) return null;
+    return h("span", {class: "pend" + (v < 0 ? " negp" : "") + (p.id === popId ? " pop" : "")}, fmtSigned(v));
+  }
+  function pendingCount(){
+    return state.players.filter(function(p){ return state.draft[p.id]; }).length;
+  }
+  function roundBar(){
+    var n = pendingCount();
+    var label = n ? "Add round " + (state.rounds.length + 1) + " to totals (" + n + ")" : (roundMsg || "Add round " + (state.rounds.length + 1) + " to totals");
+    return h("div", {class: "round-bar"},
+      h("button", {class: "btn ghost", type: "button", onclick: clearDraft, disabled: !n}, "Clear"),
+      h("button", {class: "btn", type: "button", onclick: commitRound, disabled: !n}, label));
+  }
+  function clearDraft(){ if (!pendingCount()) return; pushUndo(); state.draft = {}; roundMsg = ""; render(); save(); }
+  function commitRound(){
+    if (!pendingCount()) return;
+    var before = leaderKey();
+    pushUndo();
+    var vals = {};
+    state.players.forEach(function(p){ var v = state.draft[p.id] || 0; vals[p.id] = v; p.score = rnd(p.score + v); });
+    state.rounds.push(vals);
+    if (state.rounds.length > 200) state.rounds.shift();
+    state.draft = {};
+    roundMsg = "Round " + state.rounds.length + " added";
+    render(); save(); afterScore(before);
   }
 
   function clearSample(){
-    state.players = []; state.sample = false; selectedId = null; undoStack = [];
+    state.players = []; state.sample = false; selectedId = null; undoStack = []; state.rounds = []; state.draft = {};
     render(); save();
   }
 
@@ -342,10 +658,10 @@ body[data-tab="rank"] .dock{display:none}
     e.preventDefault();
     var names = $("addIn").value.split(/[,\n]/).map(function(s){ return s.trim(); }).filter(Boolean);
     if (!names.length) return;
-    if (state.sample){ state.players = []; state.sample = false; undoStack = []; selectedId = null; }
+    if (state.sample){ state.players = []; state.sample = false; undoStack = []; selectedId = null; state.rounds = []; state.draft = {}; }
     var take = names.slice(0, MAX - state.players.length);
     pushUndo();
-    var added = take.map(function(n){ return {id: uid(), name: n.slice(0, 24), score: 0}; });
+    var added = take.map(function(n, i){ return {id: uid(), name: n.slice(0, 24), score: 0, hue: nextHue(state.players.length + i)}; });
     state.players = state.players.concat(added);
     if (added.length) selectedId = added[0].id;
     $("addMsg").textContent = names.length > take.length ? "Added " + take.length + ". The limit is " + MAX + " players." : "";
@@ -426,16 +742,39 @@ body[data-tab="rank"] .dock{display:none}
       }));
     }
     drawWin();
+    var payMsg = h("p", {class: "msg", "aria-live": "polite"});
+    var paySeg = h("div", {class: "seg", role: "radiogroup", "aria-label": "When scores are added"});
+    function drawPay(){
+      paySeg.replaceChildren.apply(paySeg, [["At end of round", true], ["Right away", false]].map(function(o){
+        return h("button", {type: "button", role: "radio", "aria-checked": String(!!state.perRound === o[1]), onclick: function(){
+          if (!o[1] && pendingCount()){ payMsg.textContent = "Add or clear this round's scores first."; return; }
+          payMsg.textContent = ""; state.perRound = o[1]; drawPay(); render(); save();
+        }}, o[0]);
+      }));
+    }
+    drawPay();
+    var styleSeg = h("div", {class: "seg three", role: "radiogroup", "aria-label": "Input style"});
+    function drawStyle(){
+      styleSeg.replaceChildren.apply(styleSeg, [["Buttons", "chips"], ["Dial", "dial"], ["Slider", "slider"]].map(function(o){
+        return h("button", {type: "button", role: "radio", "aria-checked": String((state.style || "chips") === o[1]), onclick: function(){
+          state.style = o[1]; drawStyle(); renderDock(); save();
+        }}, o[0]);
+      }));
+    }
+    drawStyle();
+    var footText = "Scores save on this phone only. Clearing Safari website data removes them.";
     openSheet("Settings", [
       h("h2", {}, "Settings"),
       h("label", {class: "field", for: "fTitle"}, h("span", {}, "Game name"), titleIn),
       h("div", {class: "stack"}, h("span", {class: "label"}, "Who wins"), winSeg),
+      h("div", {class: "stack"}, h("span", {class: "label"}, "Adding scores"), paySeg, payMsg),
+      h("div", {class: "stack"}, h("span", {class: "label"}, "Input style"), styleSeg, h("p", {class: "foot"}, "Dial and slider start from your smallest scoring amount. Pick a bigger step on the dial or slider to reach up to \u00b110,000.")),
       h("div", {class: "stack"}, h("span", {class: "label"}, "Scoring amounts"), incWrap, incForm, incMsg,
         h("button", {class: "btn ghost", type: "button", onclick: function(){ state.incs = DEFAULT_INCS.slice(); incMsg.textContent = ""; drawIncs(); renderDock(); save(); }}, "Use default amounts")),
       h("div", {class: "stack"}, h("span", {class: "label"}, "Game"),
-        confirmBtn("Reset all scores to 0", "Tap again to reset", function(){ pushUndo(); state.players.forEach(function(p){ p.score = 0; }); save(); closeSheet(); }),
-        confirmBtn("Remove all players", "Tap again to remove all", function(){ pushUndo(); state.players = []; state.sample = false; selectedId = null; save(); closeSheet(); })),
-      h("p", {class: "foot"}, "Scores save on this phone only. Clearing Safari website data removes them."),
+        confirmBtn("Reset all scores to 0", "Tap again to reset", function(){ pushUndo(); state.players.forEach(function(p){ p.score = 0; }); state.rounds = []; state.draft = {}; save(); closeSheet(); }),
+        confirmBtn("Remove all players", "Tap again to remove all", function(){ pushUndo(); state.players = []; state.sample = false; selectedId = null; state.rounds = []; state.draft = {}; save(); closeSheet(); })),
+      h("p", {class: "foot"}, footText),
       h("button", {class: "btn", type: "button", onclick: closeSheet}, "Done")
     ]);
   }
