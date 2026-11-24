@@ -130,6 +130,10 @@ body[data-tab="rank"] .dock{display:none}
 .stack{display:grid; gap:8px}
 .foot{font-size:13px; color:var(--muted); margin:0}
 
+.seg{display:grid; grid-template-columns:1fr 1fr; gap:4px; padding:4px; background:var(--surface-2); border-radius:12px}
+.seg button{height:42px; border:0; border-radius:9px; background:transparent; color:var(--muted); font-weight:600; cursor:pointer}
+.seg button[aria-checked="true"]{background:var(--surface); color:var(--fg)}
+
 @media (prefers-reduced-motion: reduce){ *{transition:none !important} }
 </style>
 </head>
@@ -198,7 +202,7 @@ body[data-tab="rank"] .dock{display:none}
 
   function sampleState(){
     return {
-      v: 1, title: "Game night", sample: true, incs: DEFAULT_INCS.slice(),
+      v: 1, title: "Game night", sample: true, lowWins: false, incs: DEFAULT_INCS.slice(),
       players: [["Dana", 42], ["Marcus", 37], ["Priya", 37], ["Theo", 21], ["Lena", 8], ["Sam", -4]]
         .map(function(a){ return {id: uid(), name: a[0], score: a[1]}; })
     };
@@ -208,7 +212,7 @@ body[data-tab="rank"] .dock{display:none}
 
   function snapshot(){
     return {
-      v: 1, title: state.title, sample: !!state.sample, incs: state.incs,
+      v: 1, title: state.title, sample: !!state.sample, lowWins: !!state.lowWins, incs: state.incs,
       players: state.players.map(function(p){ return {id: p.id, name: p.name, score: p.score}; })
     };
   }
@@ -219,7 +223,7 @@ body[data-tab="rank"] .dock{display:none}
       return {id: String(p.id || uid()), name: String(p.name || "Player").slice(0, 24), score: isFinite(+p.score) ? +p.score : 0};
     }) : [];
     return {
-      v: 1, title: String(raw.title || "Game night").slice(0, 30), sample: !!raw.sample,
+      v: 1, title: String(raw.title || "Game night").slice(0, 30), sample: !!raw.sample, lowWins: !!raw.lowWins,
       incs: incs.length ? uniqSort(incs).slice(0, MAX_INC) : DEFAULT_INCS.slice(), players: players
     };
   }
@@ -234,7 +238,8 @@ body[data-tab="rank"] .dock{display:none}
   document.addEventListener("visibilitychange", function(){ if (document.visibilityState === "hidden") flush(); });
 
   function compute(){
-    var list = state.players.slice().sort(function(a, b){ return b.score - a.score; });
+    var dir = state.lowWins ? 1 : -1;
+    var list = state.players.slice().sort(function(a, b){ return dir * (a.score - b.score); });
     var rank = new Map(), ties = new Map(), prev = null, r = 0;
     list.forEach(function(p, i){ if (p.score !== prev){ r = i + 1; prev = p.score; } rank.set(p.id, r); ties.set(r, (ties.get(r) || 0) + 1); });
     var scores = state.players.map(function(p){ return p.score; });
@@ -248,8 +253,8 @@ body[data-tab="rank"] .dock{display:none}
     var meta = "";
     if (!isScore && c.list.length > 1){
       meta = r === 1
-        ? (tied ? "Tied for 1st" : fmt(p.score - c.list[1].score) + " ahead of " + ordinal(2))
-        : fmt(c.lead - p.score) + " behind 1st" + (tied ? " · tied" : "");
+        ? (tied ? "Tied for 1st" : fmt(Math.abs(p.score - c.list[1].score)) + " ahead of " + ordinal(2))
+        : fmt(Math.abs(c.lead - p.score)) + " behind 1st" + (tied ? " · tied" : "");
     }
     var fill = h("span", {class: "fill" + (p.score < 0 ? " neg" : "")});
     var left = p.score >= 0 ? c.zero : (p.score - c.lo) / c.span * 100;
@@ -287,7 +292,7 @@ body[data-tab="rank"] .dock{display:none}
     $("tabScore").setAttribute("aria-selected", String(tab === "score"));
     $("tabRank").setAttribute("aria-selected", String(tab === "rank"));
     $("title").textContent = state.title || "Tally Board";
-    $("count").textContent = state.players.length + " of " + MAX + " players";
+    $("count").textContent = state.players.length + " of " + MAX + " players" + (state.lowWins ? " · Low score wins" : "");
     var full = state.players.length >= MAX;
     $("addIn").disabled = full; $("addBtn").disabled = full;
     $("addIn").placeholder = full ? "Player limit reached (" + MAX + ")" : "Add players, separated by commas";
@@ -412,9 +417,19 @@ body[data-tab="rank"] .dock{display:none}
       state.incs = uniqSort(state.incs.concat(n)); incMsg.textContent = "";
       incIn.value = ""; drawIncs(); renderDock(); save(); incIn.focus();
     });
+    var winSeg = h("div", {class: "seg", role: "radiogroup", "aria-label": "Who wins"});
+    function drawWin(){
+      winSeg.replaceChildren.apply(winSeg, [["High score wins", false], ["Low score wins", true]].map(function(o){
+        return h("button", {type: "button", role: "radio", "aria-checked": String(!!state.lowWins === o[1]), onclick: function(){
+          state.lowWins = o[1]; drawWin(); render(); save();
+        }}, o[0]);
+      }));
+    }
+    drawWin();
     openSheet("Settings", [
       h("h2", {}, "Settings"),
       h("label", {class: "field", for: "fTitle"}, h("span", {}, "Game name"), titleIn),
+      h("div", {class: "stack"}, h("span", {class: "label"}, "Who wins"), winSeg),
       h("div", {class: "stack"}, h("span", {class: "label"}, "Scoring amounts"), incWrap, incForm, incMsg,
         h("button", {class: "btn ghost", type: "button", onclick: function(){ state.incs = DEFAULT_INCS.slice(); incMsg.textContent = ""; drawIncs(); renderDock(); save(); }}, "Use default amounts")),
       h("div", {class: "stack"}, h("span", {class: "label"}, "Game"),
