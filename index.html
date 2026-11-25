@@ -173,17 +173,118 @@ body[data-tab="rank"] .dock{display:none}
 .tick.on{color:var(--fg)}
 .dial-mark{position:absolute; top:5px; bottom:5px; left:50%; width:3px; margin-left:-1.5px; border-radius:2px; background:var(--accent); pointer-events:none}
 .dial-fade{position:absolute; inset:0; border-radius:12px; pointer-events:none; background:linear-gradient(90deg, var(--bg), transparent 28%, transparent 72%, var(--bg))}
-.slider{-webkit-appearance:none; appearance:none; width:100%; height:44px; margin:0; background:transparent; cursor:pointer}
-.slider::-webkit-slider-runnable-track{height:14px; border-radius:7px; background:var(--trk, var(--surface-2))}
-.slider::-moz-range-track{height:14px; border-radius:7px; background:var(--trk, var(--surface-2))}
-.slider::-webkit-slider-thumb{-webkit-appearance:none; width:34px; height:34px; margin-top:-10px; border-radius:50%; background:var(--surface); border:3px solid var(--accent); box-shadow:0 2px 8px rgba(0,0,0,.3)}
-.slider::-moz-range-thumb{width:28px; height:28px; border-radius:50%; background:var(--surface); border:3px solid var(--accent)}
-
+.wheel-box{display:flex; align-items:center; justify-content:center; gap:16px}
+.dock.lefty .wheel-box{flex-direction:row-reverse}
+.dock.lefty .round-bar{flex-direction:row-reverse}
+.wheel-side{flex:1 1 0; min-width:0; display:grid; gap:8px; justify-items:start}
+.turn-in{width:92px; height:40px; padding:0 8px; font:inherit; font-weight:600; text-align:center; color:var(--fg); background:var(--surface); border:1.5px solid var(--line); border-radius:10px; -webkit-appearance:none; appearance:none; -webkit-appearance:none; appearance:none}
+.turn-line{display:flex; align-items:center; gap:8px}
+.wheel{position:relative; width:168px; height:168px; flex:none; border-radius:50%; background:var(--surface-2); box-shadow:inset 0 0 0 1px var(--line); touch-action:none; user-select:none; -webkit-user-select:none; cursor:grab}
+.wheel:focus-visible{outline:2px solid var(--accent); outline-offset:3px}
+.wheel-rot{position:absolute; inset:0; border-radius:50%; will-change:transform;
+  background:repeating-conic-gradient(var(--muted) 0 1.2deg, transparent 1.2deg 15deg);
+  -webkit-mask-image:radial-gradient(circle closest-side, transparent 0 78%, #000 79%); mask-image:radial-gradient(circle closest-side, transparent 0 78%, #000 79%)}
+.wheel-dot{position:absolute; left:50%; top:7px; width:14px; height:14px; margin-left:-7px; border-radius:50%; background:var(--accent); box-shadow:0 1px 4px rgba(0,0,0,.35)}
+.wheel.neg .wheel-dot{background:var(--neg)}
+.wheel.off{opacity:.55; cursor:default}
+.wheel-hub{pointer-events:none; position:absolute; left:50%; top:50%; width:88px; height:88px; margin:-44px 0 0 -44px; border-radius:50%; border:0; background:var(--surface); color:var(--fg); box-shadow:0 1px 6px rgba(0,0,0,.25); display:grid; place-content:center; gap:0; font:inherit}
+.wheel-hub b{font-family:var(--font-display); font-size:22px; line-height:1.1; font-variant-numeric:tabular-nums}
+.wheel-hub span{font-size:11px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--accent-ink)}
+.wheel.neg .wheel-hub span{color:var(--neg)}
 .scale-row{display:flex; align-items:center; gap:6px; margin-bottom:8px}
 .scale-row .meta{flex:none}
 .scale-row .range{margin-left:auto}
 .sc{height:30px; min-width:44px; padding:0 10px; border-radius:999px; border:1.5px solid var(--line); background:var(--bg); color:var(--muted); font:700 13px var(--font-display); font-variant-numeric:tabular-nums; cursor:pointer}
 .sc[aria-pressed="true"]{background:var(--fg); color:var(--bg); border-color:var(--fg)}
+
+.mini{width:44px; border:0; border-radius:10px; background:var(--surface-2); color:var(--fg); font-size:20px; cursor:pointer}
+.mini.armed{width:auto; padding:0 12px; font-size:13px; font-weight:600; background:var(--neg); color:var(--on-neg)}
+.game-row{display:grid; grid-template-columns:minmax(0, 1fr) auto; gap:8px; align-items:stretch}
+.game-main{appearance:none; -webkit-appearance:none; text-align:left; min-width:0; display:grid; gap:2px; padding:10px 12px; border:1.5px solid var(--line); border-radius:12px; background:var(--bg); cursor:pointer}
+.game-row.cur .game-main{border-color:var(--accent)}
+.g-name{display:flex; align-items:center; gap:8px; min-width:0; font-weight:600}
+.g-tag{flex:none; padding:1px 8px; border-radius:999px; background:var(--accent); color:var(--on-accent); font-size:11px; font-weight:700; letter-spacing:.06em; text-transform:uppercase}
+.g-meta{font-size:12px; color:var(--muted); overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+
+/* Circular table */
+.table{position:relative; width:min(100%, 380px, max(300px, calc(100svh - var(--dock-h, 190px) - 200px))); aspect-ratio:1; margin:22px auto 0}
+.table-ring{position:absolute; border-radius:50%; border:1.5px dashed var(--line); pointer-events:none}
+.table-mid{position:absolute; left:50%; top:50%; width:44%; transform:translate(-50%,-50%); text-align:center; display:grid; gap:2px; justify-items:center; pointer-events:none}
+.table-mid .t-name{font-weight:600; font-size:15px; max-width:100%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+.table-mid .t-score{font:700 38px/1 var(--font-display); font-variant-numeric:tabular-nums}
+.table-mid .t-score.negv{color:var(--neg)}
+.table-mid .t-hint{font-size:12px; color:var(--muted)}
+.table-mid .pend{margin-top:0; text-align:center}
+.seat{appearance:none; -webkit-appearance:none; position:absolute; transform:translate(-50%,-50%); --pc:hsl(var(--h,200) 68% var(--pl)); background:transparent; border:0; padding:0; margin:0; font:inherit; color:var(--fg); display:grid; justify-items:center; gap:1px; cursor:pointer; min-width:0}
+.seat .av{width:var(--s); height:var(--s); font-size:calc(var(--s) * .42); transition:box-shadow .15s}
+.seat.sel .av{box-shadow:0 0 0 3px var(--bg), 0 0 0 5.5px var(--accent)}
+.seat-name{font-size:11px; max-width:64px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:var(--muted); line-height:1.1}
+.seat-score{font:700 12px/1.1 var(--font-display); font-variant-numeric:tabular-nums}
+.seat-score.negv{color:var(--neg)}
+.seat.sm .seat-score{font-size:10.5px}
+.seat.dense .seat-score{position:absolute; left:50%; bottom:-6px; transform:translateX(-50%); padding:0 4px; border-radius:8px; background:var(--surface); box-shadow:0 0 0 1px var(--line); font-size:10px}
+.seat-pend{position:absolute; top:-6px; left:calc(50% + var(--s) * .3); padding:1px 5px; border-radius:999px; background:var(--accent); color:var(--on-accent); font:700 10px/1.3 var(--font-display); white-space:nowrap}
+.seat-pend.negp{background:var(--neg); color:var(--on-neg)}
+.seat-pend.pop{animation:pop .4s cubic-bezier(.34,1.56,.64,1)}
+.seat .crown{top:-8px; width:15px; height:11px; margin-left:-7px}
+
+/* Round chart */
+.chart-card{background:var(--surface); border-radius:12px; padding:12px 12px 10px; margin-top:6px}
+.chart-card h3{margin:0 0 2px; font:700 16px var(--font-display)}
+.chart-card .sub{margin:0 0 6px; font-size:12px; color:var(--muted)}
+.chart-wrap{position:relative}
+.chart-wrap svg{display:block; width:100%; height:auto; touch-action:pan-y; user-select:none; -webkit-user-select:none}
+.chart-tip{position:absolute; top:4px; z-index:2; min-width:120px; max-width:190px; padding:8px 10px; border-radius:10px; background:var(--fg); color:var(--bg); font-size:12px; line-height:1.35; pointer-events:none; box-shadow:0 4px 14px rgba(0,0,0,.25)}
+.chart-tip b{display:block; margin-bottom:3px}
+.chart-tip .tr{display:flex; align-items:center; gap:6px}
+.chart-tip .tr i{flex:none; width:9px; height:9px; border-radius:50%; background:var(--pc)}
+.chart-tip .tr span{min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+.chart-tip .tr em{margin-left:auto; padding-left:6px; font-style:normal; font-weight:700; font-variant-numeric:tabular-nums}
+.legend{display:flex; flex-wrap:wrap; gap:6px; margin-top:8px}
+.lg{appearance:none; -webkit-appearance:none; --pc:hsl(var(--h,200) 68% var(--pl)); display:inline-flex; align-items:center; gap:6px; padding:4px 10px 4px 8px; border:1.5px solid var(--line); border-radius:999px; background:var(--bg); color:var(--fg); font:inherit; font-size:12px; cursor:pointer}
+.lg i{width:9px; height:9px; border-radius:50%; background:var(--pc)}
+.lg[aria-pressed="true"]{border-color:var(--accent)}
+.chart-tools{display:flex; gap:8px; margin-top:8px}
+.tbl-wrap{margin-top:8px; overflow-x:auto}
+.tbl{border-collapse:collapse; font-size:12px; font-variant-numeric:tabular-nums; width:100%}
+.tbl th, .tbl td{padding:4px 8px; text-align:right; border-bottom:1px solid var(--line); white-space:nowrap}
+.tbl th:first-child, .tbl td:first-child{text-align:left; position:sticky; left:0; background:var(--surface)}
+
+/* Features */
+.strip{display:flex; flex-wrap:wrap; align-items:center; gap:8px 10px; padding:8px 12px; background:var(--surface); border-radius:12px; margin:8px 0 0}
+.st-main{display:grid; min-width:0; flex:1 1 140px}
+.st-k{font-size:11px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--muted)}
+.st-main b{font:700 17px var(--font-display); overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+.pill{appearance:none; -webkit-appearance:none; border:0; border-radius:999px; background:var(--surface-2); color:var(--fg); font:inherit; font-size:13px; font-weight:600; padding:6px 12px; min-height:34px; cursor:pointer}
+.st-timer{display:flex; align-items:center; gap:6px}
+.t-time{font:700 18px var(--font-display); font-variant-numeric:tabular-nums; min-width:46px}
+.t-time.over{color:var(--neg)}
+.st-target{font-size:13px; font-weight:600; color:var(--muted)}
+.seat-dealer{position:absolute; left:calc(50% - var(--s) * .62); top:calc(var(--s) - 14px); width:16px; height:16px; border-radius:50%; background:var(--fg); color:var(--bg); font:700 9px/16px var(--font-display); text-align:center; box-shadow:0 0 0 2px var(--bg)}
+.sw{display:flex; align-items:center; gap:12px; padding:10px 0; border-bottom:1px solid var(--line)}
+.sw > span{flex:1; display:grid; gap:2px; min-width:0}
+.sw small{color:var(--muted); font-size:12.5px; line-height:1.3}
+.sw input{appearance:none; -webkit-appearance:none; flex:none; width:50px; height:30px; margin:0; border-radius:999px; background:var(--surface-2); position:relative; cursor:pointer; transition:background .15s}
+.sw input::after{content:""; position:absolute; top:3px; left:3px; width:24px; height:24px; border-radius:50%; background:var(--surface); box-shadow:0 1px 3px rgba(0,0,0,.3); transition:transform .15s}
+.sw input:checked{background:var(--accent)}
+.sw input:checked::after{transform:translateX(20px)}
+.sub-cfg{display:grid; gap:6px; padding:8px 0 10px; border-bottom:1px solid var(--line)}
+.ta{width:100%; min-height:96px; padding:10px; font:inherit; color:var(--fg); background:var(--surface); border:1.5px solid var(--line); border-radius:10px; -webkit-appearance:none; appearance:none; resize:vertical}
+.preset{display:grid; grid-template-columns:1fr 1fr; gap:8px}
+.roster-row{display:flex; flex-wrap:wrap; gap:6px; margin:8px 0 0}
+.rank-actions{display:flex; gap:8px; flex-wrap:wrap; margin-top:10px}
+.rank-actions .btn{flex:1 1 140px}
+.fin-win{display:grid; gap:6px; justify-items:center; text-align:center; padding:4px 0}
+.fin-win h2{margin:0}
+.fin-win .av{width:64px; height:64px; font-size:28px}
+.stand{display:grid}
+.stand-row{--pc:hsl(var(--h,200) 68% var(--pl)); display:grid; grid-template-columns:22px 28px minmax(0,1fr) auto; gap:8px; align-items:center; padding:6px 0; border-bottom:1px solid var(--line)}
+.stand-row .av{width:28px; height:28px; font-size:13px}
+.stand-row b{font-variant-numeric:tabular-nums}
+.hl{padding:10px 12px; border-radius:10px; background:var(--surface-2); font-size:14px}
+.hl em{display:block; font-style:normal; font-size:11px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--muted)}
+.share-img{width:100%; border-radius:12px; display:block}
+.grid2{display:grid; grid-template-columns:1fr 1fr; gap:10px}
 
 .toast{position:fixed; left:50%; bottom:calc(var(--dock-h, 190px) + 14px); transform:translate(-50%, 12px); z-index:25; max-width:calc(100% - 32px); padding:10px 16px; border-radius:999px; background:var(--fg); color:var(--bg); font-weight:600; font-size:14px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; opacity:0; pointer-events:none; transition:opacity .25s, transform .25s}
 .toast.show{opacity:1; transform:translate(-50%, 0)}
@@ -193,12 +294,16 @@ body[data-tab="rank"] .dock{display:none}
 </style>
 </head>
 <body>
+
 <header class="masthead">
   <div class="mast-row">
     <div class="mast-title">
       <h1 id="title">Tally Board</h1>
       <p class="sub" id="count"></p>
     </div>
+    <button class="icon-btn" id="btnGames" type="button" aria-label="Games">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 3 8l9 5 9-5-9-5Z"/><path d="m3 13 9 5 9-5"/></svg>
+    </button>
     <button class="icon-btn" id="btnSettings" type="button" aria-label="Settings">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></svg>
     </button>
@@ -216,6 +321,7 @@ body[data-tab="rank"] .dock{display:none}
     <input type="text" id="addIn" maxlength="200" placeholder="Add players, separated by commas" aria-label="Add players">
     <button class="btn" id="addBtn" type="submit">Add</button>
   </form>
+  <div class="roster-row" id="rosterRow"></div>
   <p class="msg" id="addMsg" aria-live="polite"></p>
 </main>
 
@@ -229,7 +335,27 @@ body[data-tab="rank"] .dock{display:none}
 
 <script>
 (function(){
-  var MAX = 20, MAX_INC = 8, DEFAULT_INCS = [-5, -1, 1, 5, 10], LS_KEY = "tally-board-v1";
+  var FEATURES = [
+    ["rounds", "Round plan", "Name each round, like \u201c2 sets of 3\u201d, and show it above the table."],
+    ["editRounds", "Edit past rounds", "Fix a mis-scored round from the Ranking chart."],
+    ["dealer", "Dealer marker", "A chip that moves to the next seat after every round."],
+    ["timer", "Round timer", "A stopwatch for each round, with an optional time limit."],
+    ["finish", "Finish screen", "Winner, standings and highlights when a game ends."],
+    ["target", "Target score", "The game ends when someone reaches a set score."],
+    ["sound", "Sound and haptics", "Clicks as you turn the wheel and a fanfare for a new leader."],
+    ["roster", "Players list and stats", "Remember your regulars and their wins, and add them with a tap."],
+    ["share", "Share result", "Make a picture of the final standings and chart."],
+    ["backup", "Backup and restore", "Save every game to a file or copy it, and bring it back later."],
+    ["wake", "Keep screen awake", "Stops the phone from sleeping during a game."],
+    ["lefty", "Left-handed layout", "Puts the wheel on the left."]
+  ];
+  var OFF_BY_DEFAULT = {dealer: 1, timer: 1, sound: 1, lefty: 1};
+  function normFeat(raw){
+    var o = {};
+    FEATURES.forEach(function(f){ o[f[0]] = raw && typeof raw[f[0]] === "boolean" ? raw[f[0]] : !OFF_BY_DEFAULT[f[0]]; });
+    return o;
+  }
+  var MAX = 20, MAX_INC = 8, DEFAULT_INCS = [-5, -1, 1, 5, 10], LS_KEY = "tally-board-v1", LIB_KEY = "tally-board-v2", MAX_GAMES = 30;
   var $ = function(id){ return document.getElementById(id); };
   var uid = function(){ return Math.random().toString(36).slice(2, 9); };
   var nf = new Intl.NumberFormat(undefined, {maximumFractionDigits: 2});
@@ -258,17 +384,19 @@ body[data-tab="rank"] .dock{display:none}
 
   function sampleState(){
     return {
-      v: 1, title: "Game night", sample: true, lowWins: false, perRound: true, style: "chips", scale: 0, rounds: [], draft: {}, incs: DEFAULT_INCS.slice(),
+      v: 1, title: "Game night", sample: true, lowWins: false, perRound: true, style: "chips", scale: 0, wheelPer: 10, rounds: [], labels: [], draft: {}, incs: DEFAULT_INCS.slice(), feat: normFeat(null), plan: [], dealerId: null, target: 0, limit: 0, targetHit: false, counted: false,
       players: [["Dana", 42], ["Marcus", 37], ["Priya", 37], ["Theo", 21], ["Lena", 8], ["Sam", -4]]
         .map(function(a, i){ return {id: uid(), name: a[0], score: a[1], hue: [16, 205, 285, 145, 340, 48][i]}; })
     };
   }
 
   var state = sampleState(), tab = "score", selectedId = null, undoStack = [];
+  var docs = null, storeMode = "device", hydrated = false, lib = {cur: null, games: {}, roster: {}};
 
   function snapshot(){
     return {
-      v: 1, title: state.title, sample: !!state.sample, lowWins: !!state.lowWins, style: state.style || "chips", scale: state.scale | 0, perRound: state.perRound !== false, rounds: state.rounds, draft: state.draft, incs: state.incs,
+      v: 1, title: state.title, sample: !!state.sample, lowWins: !!state.lowWins, style: state.style || "chips", scale: state.scale | 0, wheelPer: state.wheelPer || 10, perRound: state.perRound !== false, rounds: state.rounds, labels: state.labels, draft: state.draft, incs: state.incs,
+      feat: state.feat, plan: state.plan, dealerId: state.dealerId || null, target: state.target | 0, limit: state.limit | 0, targetHit: !!state.targetHit, counted: !!state.counted,
       players: state.players.map(function(p){ return {id: p.id, name: p.name, score: p.score, hue: p.hue}; })
     };
   }
@@ -280,6 +408,11 @@ body[data-tab="rank"] .dock{display:none}
       if (o && typeof o === "object") Object.keys(o).forEach(function(k){ if (isFinite(+o[k])) out[k] = +o[k]; });
       return out;
     }) : [];
+  }
+  function normLabels(l, r){
+    var n = Array.isArray(r) ? Math.min(r.length, 200) : 0, out = Array.isArray(l) ? l.slice(-n).map(function(x){ return String(x == null ? "" : x).slice(0, 40); }) : [];
+    while (out.length < n) out.unshift("");
+    return out;
   }
   function normDraft(d){
     var out = {};
@@ -294,17 +427,53 @@ body[data-tab="rank"] .dock{display:none}
       return {id: id, name: String(p.name || "Player").slice(0, 24), score: isFinite(+p.score) ? +p.score : 0, hue: isFinite(+p.hue) ? +p.hue : hashHue(id)};
     }) : [];
     return {
-      v: 1, title: String(raw.title || "Game night").slice(0, 30), sample: !!raw.sample, lowWins: !!raw.lowWins, perRound: raw.perRound !== false, style: ["chips", "dial", "slider"].indexOf(raw.style) >= 0 ? raw.style : "chips", scale: [0, 1, 2, 3].indexOf(+raw.scale) >= 0 ? +raw.scale : 0, rounds: normRounds(raw.rounds), draft: normDraft(raw.draft),
+      v: 1, updated: isFinite(+raw.updated) ? +raw.updated : 0, title: String(raw.title || "Game night").slice(0, 30), sample: !!raw.sample, lowWins: !!raw.lowWins, perRound: raw.perRound !== false, style: raw.style === "slider" ? "wheel" : ["chips", "dial", "wheel"].indexOf(raw.style) >= 0 ? raw.style : "chips", wheelPer: Math.max(1, Math.min(10000, Math.round(+raw.wheelPer) || 10)), scale: [0, 1, 2, 3].indexOf(+raw.scale) >= 0 ? +raw.scale : 0, rounds: normRounds(raw.rounds), labels: normLabels(raw.labels, raw.rounds), draft: normDraft(raw.draft),
+      feat: normFeat(raw.feat), plan: Array.isArray(raw.plan) ? raw.plan.map(function(x){ return String(x).trim().slice(0, 40); }).filter(Boolean).slice(0, 30) : [],
+      dealerId: raw.dealerId ? String(raw.dealerId) : null, target: Math.max(0, Math.min(1000000, Math.round(+raw.target) || 0)), limit: Math.max(0, Math.min(3600, Math.round(+raw.limit) || 0)), targetHit: !!raw.targetHit, counted: !!raw.counted,
       incs: incs.length ? uniqSort(incs).slice(0, MAX_INC) : DEFAULT_INCS.slice(), players: players
     };
   }
 
-  var saveTimer = 0;
+  /* Storage: every game is kept on its own, in the account when available, otherwise in this browser. */
+  var saveTimer = 0, dbBusy = {}, dbNext = {};
+  function localWrite(){
+    try { localStorage.setItem(LIB_KEY, JSON.stringify({v: 2, cur: lib.cur, games: lib.games, roster: lib.roster})); } catch (e) {}
+  }
+  function dbFailed(){ docs = null; storeMode = "device"; localWrite(); }
+  function dbPut(key, data){
+    if (!docs) return;
+    if (dbBusy[key]){ dbNext[key] = data; return; }
+    dbBusy[key] = true;
+    var ref = docs.doc(key);
+    (data === null ? ref.delete() : ref.set(data)).catch(dbFailed).then(function(){
+      dbBusy[key] = false;
+      if (key in dbNext){ var d = dbNext[key]; delete dbNext[key]; dbPut(key, d); }
+    });
+  }
+  function persistGame(id){ if (docs) dbPut("g-" + id, lib.games[id]); else localWrite(); }
+  function persistRoster(){ if (docs) dbPut("roster", {v: 1, people: lib.roster}); else localWrite(); }
+  function persistCur(){ if (docs) dbPut("cur", {id: lib.cur}); else localWrite(); }
+  function removeStored(id){ delete lib.games[id]; if (docs) dbPut("g-" + id, null); else localWrite(); }
+  function normRoster(o){
+    var out = {};
+    if (o && typeof o === "object") Object.keys(o).slice(0, 80).forEach(function(k){
+      var r = o[k]; if (!r || typeof r !== "object" || !r.name) return;
+      out[k.slice(0, 40)] = {name: String(r.name).slice(0, 24), games: Math.max(0, r.games | 0), wins: Math.max(0, r.wins | 0), pts: isFinite(+r.pts) ? +r.pts : 0, last: isFinite(+r.last) ? +r.last : 0};
+    });
+    return out;
+  }
+  function save(){
+    if (!hydrated) return;
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(flush, 350);
+  }
   function flush(){
     clearTimeout(saveTimer); saveTimer = 0;
-    try { localStorage.setItem(LS_KEY, JSON.stringify(snapshot())); } catch (e) {}
+    if (!hydrated || !lib.cur) return;
+    var data = snapshot(); data.updated = Date.now();
+    lib.games[lib.cur] = data;
+    persistGame(lib.cur);
   }
-  function save(){ clearTimeout(saveTimer); saveTimer = setTimeout(flush, 200); }
   window.addEventListener("pagehide", flush);
   document.addEventListener("visibilitychange", function(){ if (document.visibilityState === "hidden") flush(); });
 
@@ -321,7 +490,7 @@ body[data-tab="rank"] .dock{display:none}
 
   var reduce = !!(window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches);
   var shown = new Map(), barPrev = new Map(), pendingBars = [], popId = null, lastTab = null, animTok = 0, toastT = 0, fxRaf = 0;
-  var dialK = 0, sliderK = 0, dialRef = null;
+  var dialK = 0, wheelAng = 0, dialRef = null;
 
   function crownEl(){
     var NS = "http://www.w3.org/2000/svg", sv = document.createElementNS(NS, "svg"), d = document.createElementNS(NS, "path");
@@ -368,11 +537,12 @@ body[data-tab="rank"] .dock{display:none}
     })(start);
   }
   function afterScore(before){
+    if (checkTarget()) return;
     var now = leaderKey();
     if (!now || !before || now === before) return;
     var p = state.players.find(function(x){ return x.id === now; });
     if (!p) return;
-    toast(p.name + " takes the lead"); burst(p.hue);
+    toast(p.name + " takes the lead"); burst(p.hue); fanfare();
   }
   function animateScores(){
     var tok = ++animTok, jobs = [];
@@ -411,6 +581,172 @@ body[data-tab="rank"] .dock{display:none}
     return wrap;
   }
 
+  /* Circular table (Score tab) */
+  function buildTable(c){
+    var N = state.players.length, sz = N <= 6 ? 50 : N <= 10 ? 44 : N <= 14 ? 38 : N <= 16 ? 34 : 28;
+    var R = N <= 8 ? 36 : N <= 14 ? 38 : 40;
+    var sel = state.players.find(function(x){ return x.id === selectedId; });
+    var dense = N > 16, ring = h("span", {class: "table-ring"});
+    ring.style.inset = (50 - R) + "%";
+    var tbl = h("div", {class: "table"}, ring);
+    state.players.forEach(function(p, i){
+      var a = i / N * 2 * Math.PI, isSel = p.id === selectedId, r = c.rank.get(p.id);
+      var sc = h("span", {class: "seat-score" + (p.score < 0 ? " negv" : "")}, fmt(p.score));
+      sc.dataset.to = String(p.score); sc.dataset.id = p.id;
+      var v = state.perRound ? state.draft[p.id] : 0;
+      var el = h("button", {class: "seat" + (isSel ? " sel" : "") + (N > 10 ? " sm" : "") + (dense ? " dense" : ""), type: "button", "aria-pressed": String(isSel), "aria-label": p.name + ", " + fmt(p.score),
+          onclick: function(){ selectedId = p.id; render(); }},
+        avatar(p, r === 1 && c.hasLead),
+        state.feat.dealer && dealerP() && dealerP().id === p.id ? h("span", {class: "seat-dealer", "aria-label": "Dealer"}, "D") : null,
+        N <= 10 && !dense ? h("span", {class: "seat-name"}, p.name) : null,
+        sc,
+        v ? h("span", {class: "seat-pend" + (v < 0 ? " negp" : "") + (p.id === popId ? " pop" : "")}, fmtSigned(v)) : null);
+      el.style.setProperty("--h", String(p.hue)); el.style.setProperty("--s", sz + "px");
+      el.style.left = (50 + R * Math.sin(a)) + "%"; el.style.top = (50 - R * Math.cos(a)) + "%";
+      tbl.appendChild(el);
+    });
+    var mid;
+    if (sel){
+      var ms = h("span", {class: "t-score" + (sel.score < 0 ? " negv" : "")}, fmt(sel.score));
+      ms.dataset.to = String(sel.score); ms.dataset.id = sel.id;
+      mid = h("div", {class: "table-mid"}, h("span", {class: "t-name"}, sel.name), ms, pendEl(sel));
+    } else {
+      mid = h("div", {class: "table-mid"}, h("span", {class: "t-hint"}, "Tap a player to score"));
+    }
+    tbl.appendChild(mid);
+    return tbl;
+  }
+
+  /* Round-by-round chart (Ranking tab) */
+  var chartFocus = null, chartTable = false;
+  function sv(tag, attrs){
+    var e = document.createElementNS("http://www.w3.org/2000/svg", tag);
+    Object.keys(attrs || {}).forEach(function(k){ e.setAttribute(k, attrs[k]); });
+    for (var i = 2; i < arguments.length; i++) if (arguments[i]) e.appendChild(arguments[i]);
+    return e;
+  }
+  function niceTicks(lo, hi){
+    var span = (hi - lo) || 1, raw = span / 4, mag = Math.pow(10, Math.floor(Math.log10(raw))), f = raw / mag;
+    var step = (f <= 1 ? 1 : f <= 2 ? 2 : f <= 5 ? 5 : 10) * mag, out = [];
+    for (var v = Math.floor(lo / step) * step; v <= Math.ceil(hi / step) * step + step / 2; v += step) out.push(rnd(v));
+    return out;
+  }
+  function seriesData(){
+    return state.players.map(function(p){
+      var tot = 0, run = [];
+      state.rounds.forEach(function(r){ var d = +r[p.id] || 0; tot += d; run.push(d); });
+      var acc = p.score - tot, vals = [acc];
+      run.forEach(function(d){ acc += d; vals.push(rnd(acc)); });
+      return {p: p, vals: vals, deltas: [0].concat(run)};
+    });
+  }
+  function buildChart(){
+    if (!state.players.length) return null;
+    var card = h("section", {class: "chart-card", "aria-label": "Score by round"}, h("h3", {}, "Score by round"));
+    var R = state.rounds.length;
+    if (!R){
+      card.appendChild(h("p", {class: "sub"}, state.perRound
+        ? "Each round you add shows up here as a line for every player. Add one with “Add round to totals” on the Score tab."
+        : "Turn on “Adding scores” per round in Settings to chart your rounds."));
+      return card;
+    }
+    var data = seriesData(), N = data.length;
+    if (chartFocus && !data.some(function(d){ return d.p.id === chartFocus; })) chartFocus = null;
+    card.appendChild(h("p", {class: "sub"}, "Running total after each round." + (N > 1 ? " Touch the chart for details, tap a name to highlight." : "")));
+    var all = []; data.forEach(function(d){ all = all.concat(d.vals); });
+    var lo = Math.min.apply(null, all), hi = Math.max.apply(null, all);
+    if (lo === hi){ lo -= 1; hi += 1; }
+    var ticks = niceTicks(lo, hi), yLo = ticks[0], yHi = ticks[ticks.length - 1];
+    var W = 360, H = 220, m = {l: 40, r: N <= 4 ? 62 : 14, t: 10, b: 26}, pw = W - m.l - m.r, ph = H - m.t - m.b;
+    var xs = function(i){ return m.l + pw * i / R; }, ys = function(v){ return m.t + ph * (1 - (v - yLo) / (yHi - yLo)); };
+    var svg = sv("svg", {viewBox: "0 0 " + W + " " + H, role: "img", "aria-label": "Line chart of each player's running total after each round"});
+    ticks.forEach(function(t){
+      svg.appendChild(sv("line", {x1: m.l, x2: W - m.r, y1: ys(t), y2: ys(t), stroke: "var(--line)", "stroke-width": 1}));
+      var tx = sv("text", {x: m.l - 6, y: ys(t) + 3.5, "text-anchor": "end", "font-size": 10.5, fill: "var(--muted)"}); tx.textContent = compact(t) === "0" ? "0" : (t < 0 ? "−" : "") + compact(t);
+      svg.appendChild(tx);
+    });
+    if (yLo < 0 && yHi > 0) svg.appendChild(sv("line", {x1: m.l, x2: W - m.r, y1: ys(0), y2: ys(0), stroke: "var(--muted)", "stroke-width": 1, opacity: .6}));
+    var every = Math.ceil((R + 1) / 8);
+    for (var i = 0; i <= R; i += every){
+      var xt = sv("text", {x: xs(i), y: H - 8, "text-anchor": "middle", "font-size": 10.5, fill: "var(--muted)"}); xt.textContent = i === 0 ? "Start" : String(i);
+      svg.appendChild(xt);
+    }
+    var order = data.slice().sort(function(a, b){ return (a.p.id === chartFocus) - (b.p.id === chartFocus); });
+    var labels = [];
+    order.forEach(function(d){
+      var dim = chartFocus && chartFocus !== d.p.id, on = chartFocus === d.p.id;
+      var g = sv("g", {opacity: dim ? .18 : 1});
+      g.style.setProperty("--h", String(d.p.hue)); g.style.setProperty("--pc", "hsl(var(--h) 68% var(--pl))");
+      var pts = d.vals.map(function(v, i){ return xs(i).toFixed(1) + "," + ys(v).toFixed(1); }).join(" ");
+      var pl = sv("polyline", {points: pts, fill: "none", "stroke-width": on ? 3 : 2, "stroke-linejoin": "round", "stroke-linecap": "round"}); pl.style.stroke = "var(--pc)";
+      g.appendChild(pl);
+      var showAll = R <= 12 && N <= 6;
+      d.vals.forEach(function(v, i){
+        if (!(showAll || i === R)) return;
+        var c = sv("circle", {cx: xs(i), cy: ys(v), r: i === R ? 4.5 : 4, "stroke-width": 2}); c.style.fill = "var(--pc)"; c.style.stroke = "var(--surface)";
+        g.appendChild(c);
+      });
+      svg.appendChild(g);
+      if (N <= 4) labels.push({y: ys(d.vals[R]), name: d.p.name, g: g});
+    });
+    labels.sort(function(a, b){ return a.y - b.y; });
+    for (var k = 1; k < labels.length; k++) if (labels[k].y - labels[k - 1].y < 13) labels[k].y = labels[k - 1].y + 13;
+    labels.forEach(function(l){
+      var t = sv("text", {x: xs(R) + 9, y: l.y + 4, "font-size": 11, "font-weight": 600, fill: "var(--fg)", opacity: chartFocus && l.g.getAttribute("opacity") < 1 ? .3 : 1}); t.textContent = l.name.length > 8 ? l.name.slice(0, 7) + "…" : l.name;
+      svg.appendChild(t);
+    });
+    var vline = sv("line", {y1: m.t, y2: m.t + ph, stroke: "var(--muted)", "stroke-width": 1, "stroke-dasharray": "3 3"}); vline.style.display = "none"; svg.appendChild(vline);
+    var hov = sv("g", {}); svg.appendChild(hov);
+    var tip = h("div", {class: "chart-tip", hidden: true});
+    var wrap = h("div", {class: "chart-wrap"}, svg, tip);
+    var hideT = 0;
+    function show(i){
+      clearTimeout(hideT);
+      vline.setAttribute("x1", xs(i)); vline.setAttribute("x2", xs(i)); vline.style.display = "";
+      hov.replaceChildren();
+      var rows = data.filter(function(d){ return !chartFocus || d.p.id === chartFocus; });
+      rows.forEach(function(d){
+        var c = sv("circle", {cx: xs(i), cy: ys(d.vals[i]), r: 4.5, "stroke-width": 2}); c.style.setProperty("--h", String(d.p.hue));
+        c.style.fill = "hsl(var(--h) 68% var(--pl))"; c.style.stroke = "var(--surface)"; hov.appendChild(c);
+      });
+      var dir = state.lowWins ? 1 : -1;
+      rows = rows.slice().sort(function(a, b){ return dir * (a.vals[i] - b.vals[i]); });
+      var more = rows.length > 8 ? rows.length - 8 : 0;
+      tip.replaceChildren.apply(tip, [h("b", {}, i === 0 ? "Start" : "After round " + i + (state.labels[i - 1] ? " \u00b7 " + state.labels[i - 1] : ""))].concat(rows.slice(0, 8).map(function(d){
+        var row = h("div", {class: "tr"}, h("i", {}), h("span", {}, d.p.name), h("em", {}, fmt(d.vals[i]) + (i && d.deltas[i] ? " (" + fmtSigned(d.deltas[i]) + ")" : "")));
+        row.style.setProperty("--h", String(d.p.hue)); row.style.setProperty("--pc", "hsl(var(--h) 68% var(--pl))");
+        return row;
+      }), more ? [h("div", {}, "+" + more + " more")] : []));
+      tip.hidden = false;
+      var f = xs(i) / W;
+      if (f > .55){ tip.style.left = "auto"; tip.style.right = ((1 - f) * 100 + 3) + "%"; } else { tip.style.right = "auto"; tip.style.left = (f * 100 + 3) + "%"; }
+    }
+    function hide(){ vline.style.display = "none"; hov.replaceChildren(); tip.hidden = true; }
+    function at(e){
+      var r = svg.getBoundingClientRect(), x = (e.clientX - r.left) / r.width * W;
+      show(Math.max(0, Math.min(R, Math.round((x - m.l) / pw * R))));
+    }
+    svg.addEventListener("pointerdown", at); svg.addEventListener("pointermove", function(e){ if (e.pointerType === "mouse" || e.buttons) at(e); });
+    svg.addEventListener("pointerleave", function(e){ if (e.pointerType === "mouse") hide(); });
+    svg.addEventListener("pointerup", function(e){ if (e.pointerType !== "mouse"){ clearTimeout(hideT); hideT = setTimeout(hide, 2500); } });
+    card.appendChild(wrap);
+
+    if (N > 1){
+      card.appendChild(h("div", {class: "legend"}, data.map(function(d){
+        var b = h("button", {class: "lg", type: "button", "aria-pressed": String(chartFocus === d.p.id), onclick: function(){ chartFocus = chartFocus === d.p.id ? null : d.p.id; render(); }}, h("i", {}), d.p.name);
+        b.style.setProperty("--h", String(d.p.hue)); return b;
+      })));
+    }
+    card.appendChild(h("div", {class: "chart-tools"}, h("button", {class: "btn ghost sm", type: "button", onclick: function(){ chartTable = !chartTable; render(); }}, chartTable ? "Hide table" : "Show table"),
+      state.feat.editRounds ? h("button", {class: "btn ghost sm", type: "button", onclick: openRounds}, "Edit rounds") : null));
+    if (chartTable){
+      var head = h("tr", {}, h("th", {scope: "col"}, "Player"), [0].concat(state.rounds.map(function(_, i){ return i + 1; })).map(function(i){ return h("th", {scope: "col"}, i === 0 ? "Start" : "R" + i); }));
+      card.appendChild(h("div", {class: "tbl-wrap"}, h("table", {class: "tbl"}, h("thead", {}, head),
+        h("tbody", {}, data.map(function(d){ return h("tr", {}, h("td", {}, d.p.name), d.vals.map(function(v){ return h("td", {}, fmt(v)); })); })))));
+    }
+    return card;
+  }
+
   function buildRow(p, c, mode){
     var r = c.rank.get(p.id), tied = c.ties.get(r) > 1, isScore = mode === "score", sel = isScore && p.id === selectedId;
     var meta = "";
@@ -444,10 +780,103 @@ body[data-tab="rank"] .dock{display:none}
     return el;
   }
 
-  function pushUndo(){ undoStack.push(JSON.stringify({p: state.players, r: state.rounds, d: state.draft})); if (undoStack.length > 40) undoStack.shift(); }
+  /* Sound, haptics, wake lock, timer, dealer */
+  var actx = null;
+  function audio(){
+    if (!state.feat.sound) return null;
+    try {
+      if (!actx) actx = new (window.AudioContext || window.webkitAudioContext)();
+      if (actx.state === "suspended") actx.resume();
+    } catch (e) { actx = null; }
+    return actx;
+  }
+  function tone(freq, dur, type, vol, delay){
+    var a = audio(); if (!a) return;
+    try {
+      var o = a.createOscillator(), g = a.createGain(), t = a.currentTime + (delay || 0);
+      o.type = type || "sine"; o.frequency.value = freq;
+      g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(vol || 0.08, t + 0.005); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+      o.connect(g); g.connect(a.destination); o.start(t); o.stop(t + dur + 0.02);
+    } catch (e) {}
+  }
+  var lastTick = 0;
+  function tick(){
+    if (!state.feat.sound) return;
+    var now = performance.now(); if (now - lastTick < 22) return; lastTick = now;
+    tone(1500 + Math.random() * 120, 0.018, "square", 0.035);
+    if (navigator.vibrate){ try { navigator.vibrate(5); } catch (e) {} }
+  }
+  function fanfare(){ if (!state.feat.sound) return; [523, 659, 784, 1047].forEach(function(f, i){ tone(f, 0.22, "triangle", 0.09, i * 0.11); }); if (navigator.vibrate){ try { navigator.vibrate([30, 40, 30]); } catch (e) {} } }
+  function alarm(){ if (!state.feat.sound) return; [880, 880, 880].forEach(function(f, i){ tone(f, 0.12, "square", 0.06, i * 0.2); }); if (navigator.vibrate){ try { navigator.vibrate([200, 100, 200]); } catch (e) {} } }
+
+  var wl = null, wlBusy = false;
+  function wakeOff(){ if (wl){ try { wl.release(); } catch (e) {} wl = null; } }
+  function wakeSync(){
+    if (!state.feat.wake){ wakeOff(); return; }
+    if (wl || wlBusy || !navigator.wakeLock || document.visibilityState !== "visible") return;
+    wlBusy = true;
+    navigator.wakeLock.request("screen").then(function(l){ wl = l; l.addEventListener("release", function(){ if (wl === l) wl = null; }); }).catch(function(){}).then(function(){ wlBusy = false; });
+  }
+  document.addEventListener("visibilitychange", function(){ if (document.visibilityState === "visible") wakeSync(); });
+
+  var timer = {run: false, t0: 0, acc: 0, warned: false};
+  function elapsed(){ return timer.acc + (timer.run ? performance.now() - timer.t0 : 0); }
+  function fmtTime(ms){ var t = Math.floor(ms / 1000); return Math.floor(t / 60) + ":" + ("0" + (t % 60)).slice(-2); }
+  function timerReset(){ timer.run = false; timer.acc = 0; timer.warned = false; }
+  function timerToggle(){
+    audio();
+    if (timer.run){ timer.acc += performance.now() - timer.t0; timer.run = false; }
+    else { timer.t0 = performance.now(); timer.run = true; timer.warned = state.limit > 0 && elapsed() >= state.limit * 1000; }
+    render();
+  }
+  setInterval(function(){
+    var e = elapsed(), over = state.limit > 0 && e >= state.limit * 1000;
+    Array.prototype.forEach.call(document.querySelectorAll(".t-time"), function(el){ el.textContent = fmtTime(e); el.classList.toggle("over", over); });
+    if (timer.run && over && !timer.warned){ timer.warned = true; alarm(); toast("Time is up"); }
+  }, 250);
+
+  function dealerP(){ return state.players.find(function(p){ return p.id === state.dealerId; }) || state.players[0] || null; }
+  function nextDealer(){
+    if (!state.players.length) return;
+    var i = state.players.indexOf(dealerP());
+    state.dealerId = state.players[(i + 1) % state.players.length].id;
+  }
+
+  function buildStrip(){
+    var f = state.feat, parts = [], n = state.rounds.length + 1;
+    if (f.rounds && state.plan.length){
+      var lab = state.plan[n - 1];
+      parts.push(h("div", {class: "st-main"}, h("span", {class: "st-k"}, "Round " + n + (n <= state.plan.length ? " of " + state.plan.length : "")), h("b", {}, lab || (n > state.plan.length ? "Extra round" : " "))));
+    }
+    if (f.dealer && state.players.length){
+      parts.push(h("button", {class: "pill", type: "button", "aria-label": "Dealer: " + dealerP().name + ". Tap for the next dealer",
+        onclick: function(){ pushUndo(); nextDealer(); render(); save(); }}, "Dealer: " + dealerP().name + " ▸"));
+    }
+    if (f.timer){
+      var over = state.limit > 0 && elapsed() >= state.limit * 1000;
+      parts.push(h("div", {class: "st-timer"},
+        h("span", {class: "t-time" + (over ? " over" : "")}, fmtTime(elapsed())),
+        h("button", {class: "pill", type: "button", onclick: timerToggle}, timer.run ? "Pause" : (elapsed() ? "Resume" : "Start")),
+        elapsed() ? h("button", {class: "pill", type: "button", onclick: function(){ timerReset(); render(); }}, "Reset") : null));
+    }
+    if (f.target && state.target) parts.push(h("span", {class: "st-target"}, "Game ends at " + fmt(state.target)));
+    return parts.length ? h("div", {class: "strip"}, parts) : null;
+  }
+
+  function checkTarget(){
+    if (!state.feat.target || !state.target || state.targetHit) return false;
+    var hit = state.players.filter(function(p){ return p.score >= state.target; });
+    if (!hit.length) return false;
+    state.targetHit = true; save();
+    if (state.feat.finish) setTimeout(openFinish, 450);
+    else { toast(hit[0].name + " reached " + fmt(state.target)); burst(hit[0].hue); fanfare(); }
+    return true;
+  }
+
+  function pushUndo(){ undoStack.push(JSON.stringify({p: state.players, r: state.rounds, l: state.labels, d: state.draft, dl: state.dealerId})); if (undoStack.length > 40) undoStack.shift(); }
   function undo(){
     var s = undoStack.pop(); if (!s) return;
-    var o = JSON.parse(s); state.players = o.p; state.rounds = o.r || []; state.draft = o.d || {};
+    var o = JSON.parse(s); state.players = o.p; state.rounds = o.r || []; state.labels = o.l || []; state.dealerId = o.dl || null; state.draft = o.d || {};
     if (!state.players.some(function(p){ return p.id === selectedId; })) selectedId = null;
     render(); save();
   }
@@ -492,9 +921,9 @@ body[data-tab="rank"] .dock{display:none}
     if (!state.players.length){
       items = [h("p", {class: "empty"}, tab === "rank" ? "Add players on the Score tab to see the ranking." : "No players yet. Add up to " + MAX + " below, separated by commas.")];
     } else if (tab === "score"){
-      items = state.players.map(function(p){ return buildRow(p, c, "score"); });
+      items = [buildStrip(), buildTable(c)].filter(Boolean);
     } else {
-      items = [buildPodium(c)].concat(c.list.map(function(p){ return buildRow(p, c, "rank"); })).filter(Boolean);
+      items = [buildPodium(c)].concat(c.list.map(function(p){ return buildRow(p, c, "rank"); }), [buildChart(), buildRankActions()]).filter(Boolean);
     }
     rowsEl.replaceChildren.apply(rowsEl, items);
     void rowsEl.offsetWidth;
@@ -511,6 +940,8 @@ body[data-tab="rank"] .dock{display:none}
     lastTab = tab;
     renderDock();
     popId = null;
+    drawRosterChips();
+    wakeSync();
   }
 
   var SCALES = [1, 10, 100, 1000], LIMIT = 10000;
@@ -528,7 +959,7 @@ body[data-tab="rank"] .dock{display:none}
     return h("div", {class: "scale-row"}, h("span", {class: "meta"}, "Step"),
       sp.avail.map(function(st, i){
         return h("button", {class: "sc", type: "button", "aria-pressed": String(i === sp.si), onclick: function(){
-          state.scale = i; dialK = 0; sliderK = 0; renderDock(); save();
+          state.scale = i; dialK = 0; renderDock(); save();
         }}, compact(st));
       }),
       h("span", {class: "meta range"}, "Up to ±" + compact(sp.N * sp.step)));
@@ -562,7 +993,7 @@ body[data-tab="rank"] .dock{display:none}
       raf = requestAnimationFrame(function(){
         raf = 0;
         var kk = Math.max(-N, Math.min(N, Math.round(el.scrollLeft / TICK) - N));
-        if (kk !== dialK){ dialK = kk; paint(); if (navigator.vibrate) { try { navigator.vibrate(6); } catch (e) {} } }
+        if (kk !== dialK){ dialK = kk; paint(); tick(); }
       });
     });
     el.addEventListener("keydown", function(e){
@@ -574,48 +1005,120 @@ body[data-tab="rank"] .dock{display:none}
     return h("div", {class: "inrow"}, h("div", {class: "dial-wrap"}, el, h("span", {class: "dial-mark"}), h("span", {class: "dial-fade"})), btn);
   }
 
-  function sliderInput(p, sp){
-    var N = sp.N;
-    sliderK = Math.max(-N, Math.min(N, sliderK));
-    var inp = h("input", {type: "range", class: "slider", id: "amtSlider", min: String(-N), max: String(N), step: "1", value: String(sliderK), "aria-label": "Amount to add"});
-    var btn = h("button", {class: "btn tall", type: "button", onclick: function(){
-      var kk = +inp.value; if (!kk) return;
-      sliderK = 0; bump(rnd(kk * sp.step));
-    }});
+  var holdDock = false;
+  function wheelInput(p){
+    var per = state.wheelPer || 10, MAXA = LIMIT / per * 360;
+    wheelAng = Math.max(-MAXA, Math.min(MAXA, wheelAng));
+    var val = function(){ return Math.round(wheelAng / 360 * per); };
+    var cur = function(){ return p ? (state.perRound ? (state.draft[p.id] || 0) : p.score) : 0; };
+    var base = cur(), started = false, beforeKey = null;
+    var rot = h("div", {class: "wheel-rot"}, h("span", {class: "wheel-dot"}));
+    var hubVal = h("b", {}), hubLab = h("span", {});
+    var hub = h("div", {class: "wheel-hub"}, hubVal, hubLab);
+    var wheel = h("div", {class: "wheel" + (p ? "" : " off"), role: "slider", tabindex: p ? "0" : "-1", "aria-label": "Turn to add to the score",
+      "aria-valuemin": String(-LIMIT), "aria-valuemax": String(LIMIT)}, rot, hub);
+    var lastV = 0;
     function paint(){
-      var kk = +inp.value, v = rnd(kk * sp.step);
-      sliderK = kk;
-      btn.textContent = v ? "Add " + fmtSigned(v) : "Drag it"; btn.disabled = !p || !v;
-      inp.setAttribute("aria-valuetext", fmtSigned(v));
-      var pct = (kk + N) / (2 * N) * 100, col = kk < 0 ? "var(--neg)" : "var(--accent)";
-      inp.style.setProperty("--trk", kk >= 0
-        ? "linear-gradient(90deg, var(--surface-2) 50%, " + col + " 50%, " + col + " " + pct + "%, var(--surface-2) " + pct + "%)"
-        : "linear-gradient(90deg, var(--surface-2) " + pct + "%, " + col + " " + pct + "%, " + col + " 50%, var(--surface-2) 50%)");
+      var v = val(), c = cur();
+      rot.style.transform = "rotate(" + wheelAng + "deg)";
+      wheel.classList.toggle("neg", v < 0);
+      if (!p){ hubVal.textContent = "–"; hubLab.textContent = "Pick player"; }
+      else if (state.perRound){ hubVal.textContent = c ? fmtSigned(c) : "0"; hubLab.textContent = "This round"; }
+      else { hubVal.textContent = fmt(c); hubLab.textContent = "Score"; }
+      wheel.setAttribute("aria-valuenow", String(v)); wheel.setAttribute("aria-valuetext", p ? "Adding " + fmtSigned(v) : "No player selected");
     }
-    inp.addEventListener("input", paint); paint();
-    return h("div", {class: "inrow"}, inp, btn);
+    function sync(){
+      var ds = dock.querySelector(".dock-score");
+      if (ds && p) ds.replaceChildren.apply(ds, [fmt(p.score), pendEl(p)].filter(Boolean));
+      var ub = dock.querySelector(".dock-head .btn"); if (ub) ub.disabled = !undoStack.length;
+      var rb = dock.querySelector(".round-bar"); if (rb && state.perRound) rb.replaceWith(roundBar());
+    }
+    function apply(){
+      if (!p) return;
+      var v = val(); paint();
+      if (v === lastV) return;
+      lastV = v;
+      var target = rnd(base + v);
+      if (target === cur()) return;
+      if (!started){ started = true; beforeKey = leaderKey(); pushUndo(); roundMsg = ""; }
+      if (state.perRound){ if (target === 0) delete state.draft[p.id]; else state.draft[p.id] = target; }
+      else p.score = target;
+      tick();
+      holdDock = true; render(); holdDock = false;
+      sync(); paint(); save();
+    }
+    function finish(){
+      if (started) afterScore(beforeKey);
+      started = false; beforeKey = null; wheelAng = 0; lastV = 0; base = cur();
+      rot.style.transform = "rotate(0deg)"; wheel.classList.remove("neg");
+      paint();
+    }
+    paint();
+    var last = null;
+    function ang(e){
+      var r = wheel.getBoundingClientRect();
+      return Math.atan2(e.clientY - (r.top + r.height / 2), e.clientX - (r.left + r.width / 2));
+    }
+    wheel.addEventListener("pointerdown", function(e){
+      if (!p) return;
+      audio();
+      last = ang(e);
+      try { wheel.setPointerCapture(e.pointerId); } catch (x) {}
+      e.preventDefault();
+    });
+    wheel.addEventListener("pointermove", function(e){
+      if (last === null) return;
+      var a = ang(e), d = a - last;
+      if (d > Math.PI) d -= 2 * Math.PI; else if (d < -Math.PI) d += 2 * Math.PI;
+      last = a;
+      wheelAng = Math.max(-MAXA, Math.min(MAXA, wheelAng + d * 180 / Math.PI));
+      apply();
+    });
+    var end = function(){ if (last === null) return; last = null; finish(); };
+    wheel.addEventListener("pointerup", end); wheel.addEventListener("pointercancel", end);
+    wheel.addEventListener("keydown", function(e){
+      var d = e.key === "ArrowRight" || e.key === "ArrowUp" ? 1 : e.key === "ArrowLeft" || e.key === "ArrowDown" ? -1 : 0;
+      if (!d || !p) return;
+      e.preventDefault();
+      wheelAng = Math.max(-MAXA, Math.min(MAXA, (val() + d) / per * 360)); apply();
+    });
+    wheel.addEventListener("keyup", function(e){ if (/^Arrow/.test(e.key)) finish(); });
+    var perIn = h("input", {class: "turn-in", type: "number", inputmode: "numeric", min: "1", max: "10000", step: "1", value: String(per), "aria-label": "Points per full turn"});
+    perIn.addEventListener("change", function(){
+      var n = Math.round(+perIn.value);
+      state.wheelPer = isFinite(n) && n >= 1 ? Math.min(10000, n) : per;
+      wheelAng = 0; renderDock(); save();
+    });
+    return h("div", {class: "wheel-box"},
+      h("div", {class: "wheel-side"},
+        h("span", {class: "meta"}, "One full turn is worth"),
+        h("div", {class: "turn-line"}, perIn, h("span", {class: "meta"}, "points")),
+        h("span", {class: "meta"}, "Clockwise adds, counter-clockwise subtracts.")),
+      wheel);
   }
 
   function renderDock(){
+    if (holdDock) return;
+    dock.classList.toggle("lefty", !!state.feat.lefty);
     var p = state.players.find(function(x){ return x.id === selectedId; });
     var input, sc = null;
     dialRef = null;
     if (state.style === "dial"){ var spd = dialSpec(100); input = dialInput(p, spd); sc = scaleRow(spd); }
-    else if (state.style === "slider"){ var sps = dialSpec(50); input = sliderInput(p, sps); sc = scaleRow(sps); }
+    else if (state.style === "wheel") input = wheelInput(p);
     else input = h("div", {class: "chips"}, state.incs.map(function(d){
       return h("button", {class: "chip " + (d > 0 ? "plus" : "minus"), type: "button", disabled: !p, onclick: function(){ bump(d); }}, fmtSigned(d));
     }));
-    dock.replaceChildren(
+    dock.replaceChildren.apply(dock, [
       h("div", {class: "dock-head"},
         h("div", {class: "dock-who"},
           h("b", {}, p ? p.name : "No player selected"),
-          h("span", {class: "meta"}, p ? (state.perRound ? "Tap amounts to add to this round" : "Tap an amount to score") : "Tap a player above")),
+          h("span", {class: "meta"}, p ? (state.style === "wheel" ? (state.perRound ? "Turn the wheel to add to this round" : "Turn the wheel to score") : state.perRound ? "Tap amounts to add to this round" : "Tap an amount to score") : "Tap a player above")),
         p ? h("span", {class: "dock-score"}, fmt(p.score), pendEl(p)) : null,
         h("button", {class: "btn ghost sm", type: "button", onclick: undo, disabled: !undoStack.length}, "Undo"),
         h("button", {class: "btn ghost sm", type: "button", onclick: function(){ openEdit(p.id); }, disabled: !p}, "Edit")),
       sc,
       input,
-      state.perRound ? roundBar() : null);
+      state.perRound ? roundBar() : null].filter(Boolean));
     if (dialRef) dialRef.el.scrollLeft = dialRef.left;
   }
 
@@ -642,43 +1145,79 @@ body[data-tab="rank"] .dock{display:none}
     pushUndo();
     var vals = {};
     state.players.forEach(function(p){ var v = state.draft[p.id] || 0; vals[p.id] = v; p.score = rnd(p.score + v); });
-    state.rounds.push(vals);
-    if (state.rounds.length > 200) state.rounds.shift();
+    state.rounds.push(vals); state.labels.push(state.feat.rounds ? (state.plan[state.rounds.length - 1] || "") : "");
+    if (state.rounds.length > 200){ state.rounds.shift(); state.labels.shift(); }
     state.draft = {};
+    if (state.feat.dealer) nextDealer();
+    timerReset();
     roundMsg = "Round " + state.rounds.length + " added";
     render(); save(); afterScore(before);
   }
 
   function clearSample(){
-    state.players = []; state.sample = false; selectedId = null; undoStack = []; state.rounds = []; state.draft = {};
+    state.players = []; state.sample = false; selectedId = null; undoStack = []; state.rounds = []; state.labels = []; state.draft = {};
     render(); save();
   }
 
+  function rosterKey(n){ return n.trim().toLowerCase().slice(0, 40); }
+  function rosterEntry(name){
+    var k = rosterKey(name);
+    if (!lib.roster[k]) lib.roster[k] = {name: name.slice(0, 24), games: 0, wins: 0, pts: 0, last: 0};
+    return lib.roster[k];
+  }
+  function rosterPrune(){
+    var ks = Object.keys(lib.roster);
+    while (ks.length > 60){
+      ks.sort(function(a, b){ var x = lib.roster[a], y = lib.roster[b]; return (x.games - y.games) || (x.last - y.last); });
+      delete lib.roster[ks.shift()];
+    }
+  }
+  function updateRoster(winners){
+    var win = {}; winners.forEach(function(p){ win[p.id] = 1; });
+    state.players.forEach(function(p){
+      var r = rosterEntry(p.name); r.games++; r.pts += p.score; if (win[p.id]) r.wins++; r.last = Date.now();
+    });
+    rosterPrune(); persistRoster();
+  }
+  function drawRosterChips(){
+    var el = $("rosterRow"), names = [];
+    if (state.feat.roster && state.players.length < MAX){
+      var have = {}; state.players.forEach(function(p){ have[rosterKey(p.name)] = 1; });
+      names = Object.keys(lib.roster).filter(function(k){ return !have[k]; })
+        .sort(function(a, b){ return lib.roster[b].last - lib.roster[a].last; }).slice(0, 10).map(function(k){ return lib.roster[k].name; });
+    }
+    el.replaceChildren.apply(el, names.map(function(n){ return h("button", {class: "pill", type: "button", onclick: function(){ addNames([n]); }}, "+ " + n); }));
+  }
   $("addForm").addEventListener("submit", function(e){
     e.preventDefault();
     var names = $("addIn").value.split(/[,\n]/).map(function(s){ return s.trim(); }).filter(Boolean);
+    addNames(names);
+  });
+  function addNames(names){
     if (!names.length) return;
-    if (state.sample){ state.players = []; state.sample = false; undoStack = []; selectedId = null; state.rounds = []; state.draft = {}; }
+    if (state.sample){ state.players = []; state.sample = false; undoStack = []; selectedId = null; state.rounds = []; state.labels = []; state.draft = {}; }
     var take = names.slice(0, MAX - state.players.length);
     pushUndo();
     var added = take.map(function(n, i){ return {id: uid(), name: n.slice(0, 24), score: 0, hue: nextHue(state.players.length + i)}; });
     state.players = state.players.concat(added);
     if (added.length) selectedId = added[0].id;
+    if (state.feat.roster && added.length){ added.forEach(function(a){ rosterEntry(a.name).last = Date.now(); }); rosterPrune(); persistRoster(); }
     $("addMsg").textContent = names.length > take.length ? "Added " + take.length + ". The limit is " + MAX + " players." : "";
     $("addIn").value = "";
     render(); save();
-  });
+  }
 
   $("tabScore").addEventListener("click", function(){ tab = "score"; render(); });
   $("tabRank").addEventListener("click", function(){ tab = "rank"; render(); });
   $("btnSettings").addEventListener("click", openSettings);
+  $("btnGames").addEventListener("click", openGames);
 
   /* Sheets */
   var overlay = $("overlay"), sheet = $("sheet"), onSheetClose = null, lastFocus = null;
   function openSheet(label, nodes, onClose){
     lastFocus = document.activeElement; onSheetClose = onClose || null;
     sheet.setAttribute("aria-label", label);
-    sheet.replaceChildren.apply(sheet, nodes);
+    sheet.replaceChildren.apply(sheet, nodes.filter(Boolean));
     overlay.hidden = false; sheet.scrollTop = 0; sheet.focus();
   }
   function closeSheet(){
@@ -701,6 +1240,430 @@ body[data-tab="rank"] .dock{display:none}
       } else { clearTimeout(t); fn(); }
     }}, label);
     return b;
+  }
+
+  /* Games */
+  function gameIds(){
+    return Object.keys(lib.games).sort(function(a, b){ return (lib.games[b].updated || 0) - (lib.games[a].updated || 0); });
+  }
+  function resetUi(){
+    selectedId = null; undoStack = []; roundMsg = ""; dialK = 0; wheelAng = 0; popId = null; tab = "score";
+    shown.clear(); barPrev.clear(); pendingBars = []; lastTab = null; chartFocus = null; chartTable = false;
+    $("addMsg").textContent = "";
+  }
+  function adopt(id){
+    var keep = {style: state.style, scale: state.scale, wheelPer: state.wheelPer, feat: state.feat};
+    var n = normalize(lib.games[id]) || normalize(sampleState());
+    n.style = keep.style; n.scale = keep.scale; n.wheelPer = keep.wheelPer; n.feat = Object.assign({}, keep.feat);
+    state = n; lib.cur = id; resetUi();
+  }
+  function uniqueTitle(base){
+    var used = Object.keys(lib.games).map(function(k){ return lib.games[k].title; }), t = base, i = 2;
+    while (used.indexOf(t) >= 0) t = (base + " " + i++).slice(0, 30);
+    return t;
+  }
+  function blankGame(prev, rematch){
+    return {
+      v: 1, updated: Date.now(), title: uniqueTitle(rematch ? prev.title : "New game"), sample: false,
+      lowWins: rematch ? !!prev.lowWins : false, perRound: prev.perRound !== false, style: prev.style, scale: prev.scale, wheelPer: prev.wheelPer,
+      rounds: [], labels: [], draft: {}, incs: prev.incs.slice(), feat: Object.assign({}, prev.feat), plan: rematch ? (prev.plan || []).slice() : [], dealerId: null, target: rematch ? prev.target | 0 : 0, limit: prev.limit | 0, targetHit: false, counted: false,
+      players: rematch ? prev.players.map(function(p){ return {id: uid(), name: p.name, score: 0, hue: p.hue}; }) : []
+    };
+  }
+  function switchTo(id){
+    if (!lib.games[id]) return;
+    if (id === lib.cur){ closeSheet(); return; }
+    flush();
+    adopt(id); persistCur();
+    closeSheet();
+  }
+  function newGame(rematch){
+    flush();
+    var prevId = lib.cur, prev = state, id = uid();
+    lib.games[id] = blankGame(prev, rematch);
+    if (prev.sample) removeStored(prevId);
+    adopt(id); persistGame(id); persistCur();
+  }
+  function deleteGame(id){
+    var wasCur = id === lib.cur;
+    if (wasCur){ clearTimeout(saveTimer); saveTimer = 0; }
+    removeStored(id);
+    if (!wasCur) return;
+    var ids = gameIds();
+    if (ids.length) adopt(ids[0]);
+    else {
+      var nid = uid();
+      lib.games[nid] = blankGame(state, false);
+      adopt(nid); persistGame(nid);
+    }
+    persistCur();
+  }
+  function fmtWhen(ts){
+    if (!ts) return "just now";
+    var d = new Date(ts), now = new Date();
+    return d.toDateString() === now.toDateString()
+      ? "today " + d.toLocaleTimeString(undefined, {hour: "numeric", minute: "2-digit"})
+      : d.toLocaleDateString(undefined, {month: "short", day: "numeric"});
+  }
+  function summary(g){
+    var ps = g.players || [], n = ps.length, out = n + (n === 1 ? " player" : " players"), r = (g.rounds || []).length;
+    if (r) out += " · " + r + (r === 1 ? " round" : " rounds");
+    if (n > 1){
+      var dir = g.lowWins ? 1 : -1, srt = ps.slice().sort(function(a, b){ return dir * (a.score - b.score); });
+      if (srt[0].score !== srt[srt.length - 1].score){
+        out += srt[0].score === srt[1].score ? " · Tied at " + fmt(srt[0].score) : " · " + srt[0].name + " leads at " + fmt(srt[0].score);
+      }
+    }
+    return out;
+  }
+  function openGames(){
+    flush();
+    var listEl = h("div", {class: "stack"}), msg = h("p", {class: "msg", "aria-live": "polite"});
+    function draw(){
+      listEl.replaceChildren.apply(listEl, gameIds().map(function(id){
+        var g = lib.games[id], isCur = id === lib.cur, armed = false, t = 0;
+        var del = h("button", {class: "mini", type: "button", "aria-label": "Delete " + g.title}, "×");
+        del.addEventListener("click", function(){
+          if (!armed){
+            armed = true; del.textContent = "Delete?"; del.classList.add("armed");
+            t = setTimeout(function(){ armed = false; del.textContent = "×"; del.classList.remove("armed"); }, 4000);
+          } else { clearTimeout(t); deleteGame(id); msg.textContent = ""; draw(); render(); }
+        });
+        return h("div", {class: "game-row" + (isCur ? " cur" : "")},
+          h("button", {class: "game-main", type: "button", "aria-current": isCur ? "true" : null, onclick: function(){ switchTo(id); }},
+            h("span", {class: "g-name"}, g.title, isCur ? h("span", {class: "g-tag"}, "Playing") : null),
+            h("span", {class: "g-meta"}, summary(g)),
+            h("span", {class: "g-meta"}, "Updated " + fmtWhen(g.updated))),
+          del);
+      }));
+    }
+    function begin(rematch){
+      if (!state.sample && Object.keys(lib.games).length >= MAX_GAMES){ msg.textContent = "You can keep up to " + MAX_GAMES + " games. Delete one first."; return; }
+      newGame(rematch); closeSheet();
+      if (!rematch){ try { $("addIn").focus(); } catch (e) {} }
+    }
+    draw();
+    openSheet("Games", [
+      h("h2", {}, "Games"),
+      h("p", {class: "foot"}, "Games save on this phone only. Pick one to carry on where you left off."),
+      listEl, msg,
+      h("button", {class: "btn", type: "button", onclick: function(){ begin(false); }}, "New game"),
+      h("button", {class: "btn ghost", type: "button", disabled: !state.players.length, onclick: function(){ begin(true); }}, "Same players, new game"),
+      state.feat.roster ? h("button", {class: "btn ghost", type: "button", onclick: function(){ closeSheet(); openRoster(); }}, "Players and stats") : null,
+      h("button", {class: "btn ghost", type: "button", onclick: closeSheet}, "Done")
+    ]);
+  }
+
+  /* Rounds editor */
+  function openRounds(){
+    var list = h("div", {class: "stack"});
+    if (!state.rounds.length) list.appendChild(h("p", {class: "foot"}, "No rounds yet."));
+    state.rounds.map(function(_, i){ return i; }).reverse().forEach(function(i){
+      var r = state.rounds[i];
+      list.appendChild(h("button", {class: "game-main", type: "button", onclick: function(){ editRound(i); }},
+        h("span", {class: "g-name"}, "Round " + (i + 1) + (state.labels[i] ? " · " + state.labels[i] : "")),
+        h("span", {class: "g-meta"}, state.players.map(function(p){ return p.name + " " + fmtSigned(r[p.id] || 0); }).join(", "))));
+    });
+    openSheet("Rounds", [h("h2", {}, "Rounds"), h("p", {class: "foot"}, "Tap a round to fix its scores. Totals and the chart update."), list, h("button", {class: "btn", type: "button", onclick: closeSheet}, "Done")]);
+  }
+  function editRound(i){
+    var r = state.rounds[i], inputs = {}, grid = h("div", {class: "grid2"});
+    state.players.forEach(function(p){
+      var inp = h("input", {type: "number", step: "any", id: "r-" + p.id, value: String(r[p.id] || 0)});
+      inputs[p.id] = inp;
+      grid.appendChild(h("label", {class: "field", for: "r-" + p.id}, h("span", {}, p.name), inp));
+    });
+    var labelIn = h("input", {type: "text", id: "rLabel", maxlength: 40, value: state.labels[i] || "", autocomplete: "off"});
+    openSheet("Edit round " + (i + 1), [
+      h("h2", {}, "Round " + (i + 1)),
+      h("label", {class: "field", for: "rLabel"}, h("span", {}, "Label"), labelIn),
+      grid,
+      h("button", {class: "btn", type: "button", onclick: function(){
+        pushUndo();
+        state.players.forEach(function(p){
+          var old = r[p.id] || 0, n = parseNum(inputs[p.id].value);
+          if (n === null) return;
+          n = rnd(n);
+          if (n !== old){ p.score = rnd(p.score + n - old); r[p.id] = n; }
+        });
+        state.labels[i] = labelIn.value.trim().slice(0, 40);
+        save(); render(); openRounds();
+      }}, "Save round"),
+      confirmBtn("Delete this round", "Tap again to delete", function(){
+        pushUndo();
+        state.players.forEach(function(p){ p.score = rnd(p.score - (r[p.id] || 0)); });
+        state.rounds.splice(i, 1); state.labels.splice(i, 1);
+        save(); render();
+        if (state.rounds.length) openRounds(); else closeSheet();
+      }),
+      h("button", {class: "btn ghost", type: "button", onclick: openRounds}, "Back")
+    ]);
+  }
+
+  /* Finish screen */
+  function winnersOf(c){
+    if (c.list.length < 2) return [];
+    var top = c.list.filter(function(p){ return c.rank.get(p.id) === 1; });
+    return top.length === c.list.length ? [] : top;
+  }
+  function highlights(c, w){
+    var out = [], R = state.rounds.length, low = state.lowWins;
+    if (!R) return out;
+    var best = null;
+    state.rounds.forEach(function(r, i){
+      state.players.forEach(function(p){
+        var d = r[p.id] || 0;
+        if (d !== 0 && (!best || (low ? d < best.d : d > best.d))) best = {p: p, d: d, i: i};
+      });
+    });
+    if (best) out.push(["Best single round", best.p.name + " scored " + fmtSigned(best.d) + " in round " + (best.i + 1) + "."]);
+    if (w.length === 1 && R > 1){
+      var data = seriesData(), win = data.find(function(d){ return d.p.id === w[0].id; }), worst = 0, at = 0;
+      for (var i = 1; i < R; i++){
+        var others = data.filter(function(d){ return d !== win; }).map(function(d){ return d.vals[i]; });
+        var gap = low ? win.vals[i] - Math.min.apply(null, others) : Math.max.apply(null, others) - win.vals[i];
+        if (gap > worst){ worst = gap; at = i; }
+      }
+      if (worst > 0) out.push(["Biggest comeback", w[0].name + " was " + fmt(worst) + " behind after round " + at + " and still won."]);
+    }
+    var most = null;
+    state.players.forEach(function(p){
+      var t = 0; state.rounds.forEach(function(r){ var d = r[p.id] || 0; if (low ? d > 0 : d < 0) t += d; });
+      if (t !== 0 && (!most || Math.abs(t) > Math.abs(most.t))) most = {p: p, t: t};
+    });
+    if (most) out.push([low ? "Most points piled on" : "Most points lost", most.p.name + (low ? " added " : " gave up ") + fmt(Math.abs(most.t)) + " across the game."]);
+    return out;
+  }
+  function openFinish(){
+    var c = compute(), w = winnersOf(c);
+    if (state.feat.roster && !state.counted && state.players.length >= 2) updateRoster(w);
+    state.counted = true; save();
+    var win;
+    if (w.length){
+      win = h("div", {class: "fin-win"}, avatar(w[0], true),
+        h("h2", {}, w.length === 1 ? w[0].name + " wins" : w.map(function(p){ return p.name; }).join(" and ") + " tie"),
+        h("p", {class: "foot"}, w.length === 1 ? fmt(w[0].score) + " points" : "Tied at " + fmt(w[0].score)));
+      win.style.setProperty("--h", String(w[0].hue)); win.style.setProperty("--pc", "hsl(var(--h) 68% var(--pl))");
+    } else win = h("div", {class: "fin-win"}, h("h2", {}, "Game over"), h("p", {class: "foot"}, "No one is ahead yet."));
+    var stand = h("div", {class: "stand"}, c.list.map(function(p){
+      var row = h("div", {class: "stand-row"}, h("span", {}, String(c.rank.get(p.id))), avatar(p, false), h("span", {}, p.name), h("b", {}, fmt(p.score)));
+      row.style.setProperty("--h", String(p.hue)); return row;
+    }));
+    var hl = highlights(c, w).map(function(x){ return h("div", {class: "hl"}, h("em", {}, x[0]), x[1]); });
+    var nodes = [h("h2", {}, state.title), win, buildPodium(c), stand].concat(hl, [
+      state.feat.share && state.players.length >= 2 ? h("button", {class: "btn", type: "button", onclick: openShare}, "Share result") : null,
+      h("button", {class: "btn ghost", type: "button", disabled: !state.players.length, onclick: function(){ newGame(true); closeSheet(); }}, "Same players, new game"),
+      h("button", {class: "btn ghost", type: "button", onclick: closeSheet}, "Keep playing")]).filter(Boolean);
+    openSheet("Game over", nodes);
+    if (w.length){ burst(w[0].hue); fanfare(); }
+  }
+  function buildRankActions(){
+    var b = [];
+    if (state.feat.finish && state.players.length >= 2) b.push(h("button", {class: "btn", type: "button", onclick: openFinish}, "Finish game"));
+    if (state.feat.share && state.players.length >= 2) b.push(h("button", {class: "btn ghost", type: "button", onclick: openShare}, "Share result"));
+    return b.length ? h("div", {class: "rank-actions"}, b) : null;
+  }
+
+  /* Share picture */
+  function drawShare(){
+    var c = compute(), w = winnersOf(c), R = state.rounds.length, list = c.list;
+    var W = 1080, pad = 56, rowH = list.length > 12 ? 50 : 62, hdr = 250, chartH = R ? 600 : 0;
+    var H = hdr + list.length * rowH + 30 + chartH + 110;
+    var cv = document.createElement("canvas"); cv.width = W; cv.height = H;
+    var x = cv.getContext("2d"), SANS = "-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, 'Segoe UI', sans-serif";
+    var BG = "#141A21", FG = "#ECF0F4", MU = "#9AA5B1", LN = "#2C3642", AC = "#FF8A3D", NG = "#FF7A6B";
+    x.fillStyle = BG; x.fillRect(0, 0, W, H); x.textBaseline = "alphabetic";
+    x.fillStyle = FG; x.font = "700 64px " + SANS; x.fillText(state.title, pad, 108);
+    x.fillStyle = AC; x.font = "600 40px " + SANS;
+    x.fillText(w.length === 1 ? w[0].name + " wins with " + fmt(w[0].score) : w.length ? w.map(function(p){ return p.name; }).join(" and ") + " tie at " + fmt(w[0].score) : "Current standings", pad, 168);
+    x.fillStyle = MU; x.font = "400 30px " + SANS; x.fillText(new Date().toLocaleDateString(undefined, {weekday: "long", month: "long", day: "numeric"}) + (R ? "  ·  " + R + (R === 1 ? " round" : " rounds") : ""), pad, 212);
+    var bx = 470, bw = 360, xv = function(v){ return bx + (v - c.lo) / c.span * bw; };
+    list.forEach(function(p, i){
+      var y = hdr + i * rowH, cy = y + rowH / 2, col = "hsl(" + p.hue + " 68% 62%)";
+      x.fillStyle = MU; x.font = "600 30px " + SANS; x.textAlign = "left"; x.fillText(String(c.rank.get(p.id)), pad, cy + 10);
+      x.fillStyle = col; x.beginPath(); x.arc(pad + 76, cy, 20, 0, 7); x.fill();
+      x.fillStyle = "#10151B"; x.font = "700 22px " + SANS; x.textAlign = "center"; x.fillText((Array.from(p.name.trim())[0] || "?").toUpperCase(), pad + 76, cy + 8);
+      x.textAlign = "left"; x.fillStyle = FG; x.font = "600 32px " + SANS;
+      var nm = p.name; while (nm.length > 1 && x.measureText(nm).width > 270) nm = nm.slice(0, -1);
+      x.fillText(nm === p.name ? nm : nm + "…", pad + 118, cy + 11);
+      x.fillStyle = LN; x.fillRect(bx, cy - 7, bw, 14);
+      var a = xv(Math.min(0, p.score)), b = xv(Math.max(0, p.score));
+      x.fillStyle = p.score < 0 ? NG : col; x.fillRect(a, cy - 7, Math.max(4, b - a), 14);
+      x.fillStyle = FG; x.font = "700 34px " + SANS; x.textAlign = "right"; x.fillText(fmt(p.score), W - pad, cy + 12);
+    });
+    x.textAlign = "left";
+    if (R){
+      var top = hdr + list.length * rowH + 60, data = seriesData(), all = [];
+      data.forEach(function(d){ all = all.concat(d.vals); });
+      var lo = Math.min.apply(null, all), hi = Math.max.apply(null, all); if (lo === hi){ lo -= 1; hi += 1; }
+      var ticks = niceTicks(lo, hi), yLo = ticks[0], yHi = ticks[ticks.length - 1];
+      var cx0 = pad + 80, cx1 = W - pad - 10, cy0 = top + 70, cy1 = top + 470;
+      var X = function(i){ return cx0 + (cx1 - cx0) * i / R; }, Y = function(v){ return cy1 - (cy1 - cy0) * (v - yLo) / (yHi - yLo); };
+      x.fillStyle = FG; x.font = "700 36px " + SANS; x.fillText("Score by round", pad, top + 20);
+      x.font = "400 24px " + SANS; x.fillStyle = MU;
+      ticks.forEach(function(t){ x.strokeStyle = LN; x.lineWidth = 1.5; x.beginPath(); x.moveTo(cx0, Y(t)); x.lineTo(cx1, Y(t)); x.stroke(); x.textAlign = "right"; x.fillText(String(t), cx0 - 12, Y(t) + 8); });
+      x.textAlign = "center"; var ev = Math.ceil((R + 1) / 9);
+      for (var i = 0; i <= R; i += ev) x.fillText(i === 0 ? "Start" : String(i), X(i), cy1 + 40);
+      data.forEach(function(d){
+        x.strokeStyle = "hsl(" + d.p.hue + " 68% 62%)"; x.lineWidth = 5; x.lineJoin = "round"; x.lineCap = "round"; x.beginPath();
+        d.vals.forEach(function(v, i){ if (i) x.lineTo(X(i), Y(v)); else x.moveTo(X(i), Y(v)); }); x.stroke();
+      });
+    }
+    x.textAlign = "left"; x.fillStyle = MU; x.font = "600 26px " + SANS; x.fillText("Tally Board", pad, H - 44);
+    return cv;
+  }
+  function openShare(){
+    var cv = drawShare(), img = h("img", {class: "share-img", alt: "Final standings and score chart", src: cv.toDataURL("image/png")});
+    var canShare = false, file = null, msg = h("p", {class: "foot"}, "Press and hold the picture to save it.");
+    cv.toBlob(function(blob){
+      if (!blob) return;
+      try { file = new File([blob], "tally-board.png", {type: "image/png"}); canShare = !!(navigator.canShare && navigator.canShare({files: [file]})); } catch (e) {}
+      if (canShare){ btn.hidden = false; msg.textContent = "Tap Share, or press and hold the picture to save it."; }
+    }, "image/png");
+    var btn = h("button", {class: "btn", type: "button", hidden: true, onclick: function(){ if (file) navigator.share({files: [file], title: state.title}).catch(function(){}); }}, "Share");
+    var saveBtn = h("button", {class: "btn ghost", type: "button", onclick: function(){
+      cv.toBlob(function(b){ if (b) saveFile("tally-board-result.png", b).then(function(r){ msg.textContent = r === "saved" ? "Picture saved." : r === "declined" ? "Not saved." : "Saving did not work here. Press and hold the picture instead."; }); }, "image/png");
+    }}, "Save picture");
+    openSheet("Share result", [h("h2", {}, "Share result"), img, msg, btn, saveBtn, h("button", {class: "btn ghost", type: "button", onclick: closeSheet}, "Done")]);
+  }
+
+  /* Players list and stats */
+  function openRoster(){
+    var listEl = h("div", {class: "stack"}), msg = h("p", {class: "msg", "aria-live": "polite"});
+    function draw(){
+      var keys = Object.keys(lib.roster).sort(function(a, b){ var x = lib.roster[a], y = lib.roster[b]; return (y.games - x.games) || (y.last - x.last); });
+      if (!keys.length){ listEl.replaceChildren(h("p", {class: "foot"}, "Players you add show up here, with their wins once you finish games.")); return; }
+      listEl.replaceChildren.apply(listEl, keys.map(function(k){
+        var r = lib.roster[k], armed = false, t = 0, inGame = state.players.some(function(p){ return rosterKey(p.name) === k; });
+        var del = h("button", {class: "mini", type: "button", "aria-label": "Forget " + r.name}, "×");
+        del.addEventListener("click", function(){
+          if (!armed){ armed = true; del.textContent = "Forget?"; del.classList.add("armed"); t = setTimeout(function(){ armed = false; del.textContent = "×"; del.classList.remove("armed"); }, 4000); }
+          else { clearTimeout(t); delete lib.roster[k]; persistRoster(); draw(); }
+        });
+        var meta = r.games ? r.games + (r.games === 1 ? " game" : " games") + " · " + r.wins + (r.wins === 1 ? " win" : " wins") + " · " + Math.round(r.wins / r.games * 100) + "% · avg " + fmt(Math.round(r.pts / r.games)) : "No finished games yet";
+        return h("div", {class: "game-row"},
+          h("button", {class: "game-main", type: "button", disabled: inGame, onclick: function(){
+            if (state.players.length >= MAX){ msg.textContent = "The table is full."; return; }
+            addNames([r.name]); msg.textContent = r.name + " joined this game."; draw();
+          }}, h("span", {class: "g-name"}, r.name, inGame ? h("span", {class: "g-tag"}, "In game") : null), h("span", {class: "g-meta"}, meta)),
+          del);
+      }));
+    }
+    draw();
+    openSheet("Players", [h("h2", {}, "Players"), h("p", {class: "foot"}, "Tap a name to add them to this game. Wins and averages update when you finish a game."), listEl, msg, h("button", {class: "btn", type: "button", onclick: closeSheet}, "Done")]);
+  }
+
+  /* Saving files: the Claude viewer needs its downloads capability; elsewhere a normal download works */
+  async function saveFile(name, blob){
+    try {
+      if (window.claude && window.claude.use){
+        var d = await window.claude.use("downloads");
+        if (d){ await d.save({filename: name, data: blob}); return "saved"; }
+      }
+    } catch (e) { return e && e.code === "declined" ? "declined" : "failed"; }
+    try {
+      var a = document.createElement("a");
+      a.href = URL.createObjectURL(blob); a.download = name;
+      document.body.appendChild(a); a.click(); a.remove();
+      return "saved";
+    } catch (e) { return "failed"; }
+  }
+
+  /* Backup and restore */
+  function exportText(){
+    flush();
+    return JSON.stringify({app: "tally-board", v: 1, exported: new Date().toISOString(), cur: lib.cur, games: lib.games, roster: lib.roster});
+  }
+  function importText(text){
+    var o; try { o = JSON.parse(text); } catch (e) { return "That is not a valid backup."; }
+    if (!o || typeof o !== "object" || !o.games || typeof o.games !== "object") return "That is not a Tally Board backup.";
+    var added = 0, updated = 0;
+    Object.keys(o.games).forEach(function(id){
+      var g = normalize(o.games[id]); if (!g) return;
+      id = String(id).slice(0, 40).replace(/[^A-Za-z0-9_\-.~:@+]/g, "");
+      if (!id) return;
+      if (lib.games[id]){ if ((g.updated || 0) > (lib.games[id].updated || 0)){ lib.games[id] = g; updated++; persistGame(id); } return; }
+      if (Object.keys(lib.games).length >= MAX_GAMES) return;
+      lib.games[id] = g; added++; persistGame(id);
+    });
+    var rs = normRoster(o.roster);
+    Object.keys(rs).forEach(function(k){ var cur = lib.roster[k]; if (!cur || rs[k].games > cur.games) lib.roster[k] = rs[k]; });
+    rosterPrune(); persistRoster();
+    return "Imported " + added + (added === 1 ? " game" : " games") + (updated ? " and updated " + updated : "") + ".";
+  }
+  function openBackup(){
+    var msg = h("p", {class: "msg", "aria-live": "polite"}), ta = h("textarea", {class: "ta", id: "bkText", placeholder: "Paste a backup here to restore it", "aria-label": "Paste a backup"});
+    var fileIn = h("input", {type: "file", accept: ".json,application/json", hidden: true});
+    fileIn.addEventListener("change", function(){
+      var f = fileIn.files && fileIn.files[0]; if (!f) return;
+      var rd = new FileReader(); rd.onload = function(){ msg.textContent = importText(String(rd.result)); }; rd.readAsText(f);
+    });
+    openSheet("Backup and restore", [
+      h("h2", {}, "Backup and restore"),
+      h("p", {class: "foot"}, "A backup holds every saved game and your players list. Restoring adds games back without removing the ones you have."),
+      h("button", {class: "btn", type: "button", onclick: function(){
+        saveFile("tally-board-backup-" + new Date().toISOString().slice(0, 10) + ".json", new Blob([exportText()], {type: "application/json"})).then(function(r){
+          msg.textContent = r === "saved" ? "Backup saved. If you cannot find it, use Copy backup instead." : r === "declined" ? "Not saved." : "Saving a file did not work here. Use Copy backup instead.";
+        });
+      }}, "Save backup file"),
+      h("button", {class: "btn ghost", type: "button", onclick: function(){
+        var t = exportText();
+        var fallback = function(){ ta.value = t; ta.focus(); ta.select(); msg.textContent = "Copy blocked. The backup is in the box below: select all and copy it."; };
+        if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(t).then(function(){ msg.textContent = "Backup copied. Paste it somewhere safe, like Notes."; }, fallback); else fallback();
+      }}, "Copy backup"),
+      h("button", {class: "btn ghost", type: "button", onclick: function(){ fileIn.click(); }}, "Restore from file"),
+      fileIn,
+      h("label", {class: "field", for: "bkText"}, h("span", {}, "Or paste a backup"), ta),
+      h("button", {class: "btn ghost", type: "button", onclick: function(){ msg.textContent = importText(ta.value); }}, "Restore pasted backup"),
+      msg,
+      h("button", {class: "btn ghost", type: "button", onclick: closeSheet}, "Done")
+    ]);
+  }
+
+  /* Features sheet */
+  function openFeatures(){
+    var box = h("div", {});
+    function setAll(on){ FEATURES.forEach(function(f){ state.feat[f[0]] = on; }); wakeSync(); render(); save(); draw(); }
+    function subCfg(key){
+      if (key === "rounds"){
+        var ta = h("textarea", {class: "ta", id: "fPlan", maxlength: 1500, placeholder: "One round per line, for example:\n2 sets of 3\n1 set of 3, 1 run of 4"}); ta.value = state.plan.join("\n");
+        ta.addEventListener("input", function(){ state.plan = ta.value.split("\n").map(function(x){ return x.trim().slice(0, 40); }).filter(Boolean).slice(0, 30); render(); save(); });
+        return h("div", {class: "sub-cfg"}, h("label", {class: "field", for: "fPlan"}, h("span", {}, "Your rounds"), ta));
+      }
+      if (key === "timer" || key === "target"){
+        var isT = key === "timer", inp = h("input", {type: "number", inputmode: "numeric", min: "0", step: isT ? "5" : "1", id: "f-" + key, value: String(isT ? state.limit : state.target)});
+        inp.addEventListener("change", function(){
+          var n = Math.max(0, Math.round(+inp.value) || 0);
+          if (isT){ state.limit = Math.min(3600, n); timer.warned = false; } else { state.target = Math.min(1000000, n); state.targetHit = false; }
+          inp.value = String(isT ? state.limit : state.target); render(); save();
+        });
+        return h("div", {class: "sub-cfg"}, h("label", {class: "field", for: "f-" + key}, h("span", {}, isT ? "Time limit per round, in seconds (0 for none)" : "Target score (0 for none)"), inp));
+      }
+      return null;
+    }
+    function draw(){
+      var rows = [];
+      FEATURES.forEach(function(f){
+        var key = f[0], cb = h("input", {type: "checkbox", role: "switch", "aria-label": f[1]});
+        cb.checked = !!state.feat[key];
+        cb.addEventListener("change", function(){
+          state.feat[key] = cb.checked;
+          if (key === "sound" && cb.checked){ audio(); tone(880, 0.1, "triangle", 0.08); }
+          wakeSync(); render(); save(); draw();
+        });
+        rows.push(h("label", {class: "sw"}, h("span", {}, h("b", {}, f[1]), h("small", {}, f[2])), cb));
+        if (state.feat[key]){ var cfg = subCfg(key); if (cfg) rows.push(cfg); }
+      });
+      box.replaceChildren.apply(box, rows);
+    }
+    draw();
+    openSheet("Features", [
+      h("h2", {}, "Features"),
+      h("p", {class: "foot"}, "Switch on only what you want. These apply to every game on this device, and Simple gives you the plain scoreboard."),
+      h("div", {class: "preset"}, h("button", {class: "btn ghost", type: "button", onclick: function(){ setAll(false); }}, "Simple"), h("button", {class: "btn ghost", type: "button", onclick: function(){ setAll(true); }}, "Everything")),
+      box,
+      h("button", {class: "btn", type: "button", onclick: closeSheet}, "Done")
+    ]);
   }
 
   function openSettings(){
@@ -755,25 +1718,29 @@ body[data-tab="rank"] .dock{display:none}
     drawPay();
     var styleSeg = h("div", {class: "seg three", role: "radiogroup", "aria-label": "Input style"});
     function drawStyle(){
-      styleSeg.replaceChildren.apply(styleSeg, [["Buttons", "chips"], ["Dial", "dial"], ["Slider", "slider"]].map(function(o){
+      styleSeg.replaceChildren.apply(styleSeg, [["Buttons", "chips"], ["Dial", "dial"], ["Wheel", "wheel"]].map(function(o){
         return h("button", {type: "button", role: "radio", "aria-checked": String((state.style || "chips") === o[1]), onclick: function(){
           state.style = o[1]; drawStyle(); renderDock(); save();
         }}, o[0]);
       }));
     }
     drawStyle();
-    var footText = "Scores save on this phone only. Clearing Safari website data removes them.";
+    var footText = "Games save on this phone only. Clearing Safari website data removes them.";
     openSheet("Settings", [
       h("h2", {}, "Settings"),
       h("label", {class: "field", for: "fTitle"}, h("span", {}, "Game name"), titleIn),
       h("div", {class: "stack"}, h("span", {class: "label"}, "Who wins"), winSeg),
       h("div", {class: "stack"}, h("span", {class: "label"}, "Adding scores"), paySeg, payMsg),
-      h("div", {class: "stack"}, h("span", {class: "label"}, "Input style"), styleSeg, h("p", {class: "foot"}, "Dial and slider start from your smallest scoring amount. Pick a bigger step on the dial or slider to reach up to \u00b110,000.")),
+      h("div", {class: "stack"}, h("span", {class: "label"}, "Input style"), styleSeg, h("p", {class: "foot"}, "The dial starts from your smallest scoring amount; pick a bigger step to reach \u00b110,000. On the wheel, drag a finger around the ring and set how many points one full turn is worth. Points go straight into the round as you turn.")),
       h("div", {class: "stack"}, h("span", {class: "label"}, "Scoring amounts"), incWrap, incForm, incMsg,
         h("button", {class: "btn ghost", type: "button", onclick: function(){ state.incs = DEFAULT_INCS.slice(); incMsg.textContent = ""; drawIncs(); renderDock(); save(); }}, "Use default amounts")),
+      h("div", {class: "stack"}, h("span", {class: "label"}, "Features"),
+        h("button", {class: "btn ghost", type: "button", onclick: function(){ closeSheet(); openFeatures(); }}, "Choose features (Simple to Everything)")),
       h("div", {class: "stack"}, h("span", {class: "label"}, "Game"),
-        confirmBtn("Reset all scores to 0", "Tap again to reset", function(){ pushUndo(); state.players.forEach(function(p){ p.score = 0; }); state.rounds = []; state.draft = {}; save(); closeSheet(); }),
-        confirmBtn("Remove all players", "Tap again to remove all", function(){ pushUndo(); state.players = []; state.sample = false; selectedId = null; state.rounds = []; state.draft = {}; save(); closeSheet(); })),
+        state.feat.finish && state.players.length >= 2 ? h("button", {class: "btn ghost", type: "button", onclick: function(){ closeSheet(); openFinish(); }}, "Finish game") : null,
+        state.feat.backup ? h("button", {class: "btn ghost", type: "button", onclick: function(){ closeSheet(); openBackup(); }}, "Backup and restore") : null,
+        confirmBtn("Reset all scores to 0", "Tap again to reset", function(){ pushUndo(); state.players.forEach(function(p){ p.score = 0; }); state.rounds = []; state.labels = []; state.draft = {}; state.counted = false; state.targetHit = false; timerReset(); save(); closeSheet(); }),
+        confirmBtn("Remove all players", "Tap again to remove all", function(){ pushUndo(); state.players = []; state.sample = false; selectedId = null; state.rounds = []; state.labels = []; state.draft = {}; save(); closeSheet(); })),
       h("p", {class: "foot"}, footText),
       h("button", {class: "btn", type: "button", onclick: closeSheet}, "Done")
     ]);
@@ -796,6 +1763,7 @@ body[data-tab="rank"] .dock{display:none}
       h("h2", {}, "Edit player"),
       h("label", {class: "field", for: "fName"}, h("span", {}, "Name"), nameIn),
       h("label", {class: "field", for: "fScore"}, h("span", {}, "Set score"), scoreIn),
+      state.feat.dealer ? h("button", {class: "btn ghost", type: "button", onclick: function(){ state.dealerId = id; save(); onSheetClose = null; closeSheet(); }}, "Make dealer") : null,
       confirmBtn("Remove player", "Tap again to remove", function(){
         pushUndo(); state.players = state.players.filter(function(x){ return x.id !== id; });
         selectedId = null; onSheetClose = null; save(); closeSheet();
@@ -808,13 +1776,77 @@ body[data-tab="rank"] .dock{display:none}
     new ResizeObserver(function(){ document.documentElement.style.setProperty("--dock-h", dock.offsetHeight + "px"); }).observe(dock);
   }
 
-  try {
-    var raw = localStorage.getItem(LS_KEY);
-    var n = raw ? normalize(JSON.parse(raw)) : null;
-    if (n) state = n;
-  } catch (e) {}
-  render();
+  function withTimeout(promise, ms){
+    return new Promise(function(resolve, reject){
+      var t = setTimeout(function(){ reject(new Error("timeout")); }, ms);
+      promise.then(function(v){ clearTimeout(t); resolve(v); }, function(e){ clearTimeout(t); reject(e); });
+    });
+  }
 
+  function localLoad(){
+    try {
+      var raw = localStorage.getItem(LIB_KEY);
+      if (raw){
+        var o = JSON.parse(raw), out = {cur: o && o.cur, games: {}, roster: normRoster(o && o.roster)};
+        if (o && o.games) Object.keys(o.games).forEach(function(id){ var g = normalize(o.games[id]); if (g) out.games[id] = g; });
+        return out;
+      }
+      var old = localStorage.getItem(LS_KEY);
+      if (old){
+        var g1 = normalize(JSON.parse(old));
+        if (g1){ var id1 = uid(), games = {}; g1.updated = Date.now(); games[id1] = g1; return {cur: id1, games: games, roster: {}}; }
+      }
+    } catch (e) {}
+    return null;
+  }
+
+  async function init(){
+    document.body.classList.add("loading");
+    render();
+    var legacy = null, curId = null, fresh = null;
+    try {
+      if (window.claude && window.claude.use){
+        var parts = await Promise.all([window.claude.use("db"), window.claude.use("user")]);
+        var db = parts[0], user = parts[1], uidv = user ? await user.id() : null;
+        if (db && uidv){
+          var col = db.collection("data/users/" + uidv);
+          var qs = await withTimeout(col.get(), 8000);
+          qs.docs.forEach(function(d){
+            var k = d.id, v = d.data();
+            if (!v) return;
+            if (k.slice(0, 2) === "g-"){ var g = normalize(v); if (g) lib.games[k.slice(2)] = g; }
+            else if (k === "cur") curId = v.id;
+            else if (k === "roster") lib.roster = normRoster(v.people);
+            else if (k === "tally") legacy = v;
+          });
+          docs = col; storeMode = "account";
+        }
+      }
+    } catch (e) { docs = null; lib.games = {}; lib.roster = {}; legacy = null; curId = null; }
+    if (!docs){
+      storeMode = "device";
+      var loc = localLoad();
+      if (loc){ lib.games = loc.games; lib.roster = loc.roster || {}; curId = loc.cur; }
+    } else if (!Object.keys(lib.games).length && legacy){
+      var lg = normalize(legacy);
+      if (lg){ fresh = uid(); lg.updated = Date.now(); lib.games[fresh] = lg; curId = fresh; }
+    }
+    var ids = gameIds();
+    if (!ids.length){
+      fresh = uid();
+      var sg = normalize(sampleState()); sg.updated = Date.now();
+      lib.games[fresh] = sg; curId = fresh; ids = [fresh];
+    }
+    if (!curId || !lib.games[curId]) curId = ids[0];
+    lib.cur = curId;
+    state = normalize(lib.games[curId]) || normalize(sampleState());
+    selectedId = null;
+    hydrated = true;
+    if (fresh){ persistGame(fresh); persistCur(); } else if (!docs){ localWrite(); }
+    document.body.classList.remove("loading");
+    render();
+  }
+  init();
   if ("serviceWorker" in navigator){
     window.addEventListener("load", function(){ navigator.serviceWorker.register("sw.js").catch(function(){}); });
   }
