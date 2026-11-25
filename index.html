@@ -3,13 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Tally Board</title>
-<meta name="theme-color" content="#EDF0F3" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#0E1217" media="(prefers-color-scheme: dark)">
+<title>Round Tally</title>
+<meta name="theme-color" content="#FFF3DD" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#181330" media="(prefers-color-scheme: dark)">
 <meta name="color-scheme" content="light dark">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Tally Board">
+<meta name="apple-mobile-web-app-title" content="Round Tally">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png">
@@ -123,7 +123,7 @@ body[data-tab="rank"] .dock{display:none}
 .chip:active:not(:disabled){transform:scale(.96)}
 .chip:disabled{opacity:.4; cursor:default}
 
-.overlay{position:fixed; inset:0; z-index:20; background:rgba(8,12,17,.55); display:flex; align-items:flex-end}
+.overlay{position:fixed; inset:0; z-index:80; background:rgba(8,12,17,.55); display:flex; align-items:flex-end}
 .sheet{
   width:100%; max-height:90vh; max-height:90dvh; overflow:auto; background:var(--surface); border-radius:18px 18px 0 0; display:grid; gap:16px;
   padding:18px max(16px, env(safe-area-inset-right, 0px)) calc(18px + env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px));
@@ -223,6 +223,9 @@ body[data-tab="rank"] .dock{display:none}
 .table-mid .t-score{font:700 34px/1 var(--font-display); font-variant-numeric:tabular-nums; max-width:100%}
 .table-mid .t-score.negv{color:var(--neg)}
 .table-mid .t-hint{font-size:12px; color:var(--muted)}
+.table-mid .t-rtitle{font:700 clamp(17px, calc(var(--ts) * .068), 26px)/1.05 var(--font-display); text-shadow:0 2px 0 rgba(0,0,0,.18)}
+.table-mid .t-cue{font-weight:700; font-size:clamp(11px, calc(var(--ts) * .036), 14px); line-height:1.2; text-wrap:balance}
+html[data-skin="wash"] .table-mid .t-rtitle, html[data-skin="plain"] .table-mid .t-rtitle{text-shadow:none}
 .table-mid .pend{margin-top:0; text-align:center}
 .seat{appearance:none; -webkit-appearance:none; position:absolute; left:calc(50% + var(--rp) * var(--sx)); top:calc(16px + var(--ts) / 2 - var(--rp) * var(--cy)); transform:translate(-50%, calc(var(--s) / -2)); --pc:hsl(var(--h,200) var(--ps,68%) var(--pl)); background:transparent; border:0; padding:0; margin:0; font:inherit; color:var(--fg); display:grid; justify-items:center; gap:1px; cursor:pointer; min-width:0}
 .seat .av{width:var(--s); height:var(--s); font-size:calc(var(--s) * .42); transition:box-shadow .15s}
@@ -300,7 +303,7 @@ body[data-tab="rank"] .dock{display:none}
 .grid2{display:grid; grid-template-columns:1fr 1fr; gap:10px}
 
 /* Presentation mode */
-.pres{--pl:62%; --pc-ink:#10151B; position:fixed; inset:0; z-index:60; display:grid; grid-template-rows:auto minmax(0,1fr); gap:clamp(8px, 2vmin, 22px); background:#0E1318; color:#F2F5F8; font-family:var(--font-body);
+.pres{position:fixed; inset:0; z-index:60; display:grid; grid-template-rows:auto minmax(0,1fr); gap:clamp(8px, 2vmin, 22px); background-color:var(--bg); color:var(--fg); font-family:var(--font-body);
   padding:max(12px, env(safe-area-inset-top, 0px)) max(18px, env(safe-area-inset-right, 0px)) max(12px, env(safe-area-inset-bottom, 0px)) max(18px, env(safe-area-inset-left, 0px)); overflow:hidden}
 .pres[hidden]{display:none}
 .pr-head{display:flex; align-items:center; justify-content:space-between; gap:clamp(10px, 2.4vmin, 28px); min-width:0}
@@ -314,7 +317,7 @@ body[data-tab="rank"] .dock{display:none}
 .pr-body{display:grid; grid-template-columns:minmax(0, 5fr) minmax(0, 6fr); gap:clamp(10px, 2.4vmin, 28px); min-height:0}
 @media (orientation:portrait){ .pr-body{grid-template-columns:minmax(0, 1fr); grid-template-rows:minmax(0, 1.15fr) minmax(0, .85fr)} }
 .pr-list{container-type:size; display:flex; flex-direction:column; gap:.4cqh; min-height:0}
-.prow{--pc:hsl(var(--h,200) var(--ps,68%) var(--pl)); flex:1 1 0; min-height:0; display:grid; grid-template-columns:1.2em 1.9em minmax(0, 1fr) auto; align-items:center; gap:.45em; font-size:clamp(11px, min(calc(100cqh / var(--n) * .5), 6.4cqw), 46px); padding:0 .35em; border-radius:.5em; background:#171E26}
+.prow{--pc:hsl(var(--h,200) var(--ps,68%) var(--pl)); flex:1 1 0; min-height:0; display:grid; grid-template-columns:1.2em 1.9em minmax(0, 1fr) auto; align-items:center; gap:.45em; font-size:clamp(11px, min(calc(100cqh / var(--n) * .38), 6.4cqw), 46px); padding:0 .35em; border-radius:.5em; background:#171E26}
 .prow.lead{box-shadow:inset 0 0 0 .1em #FF8A3D}
 .prow .prk{color:#9AA7B4; font-weight:700; text-align:center; font-variant-numeric:tabular-nums}
 .prow .av{width:1.8em; height:1.8em; font-size:.82em}
@@ -338,9 +341,9 @@ body[data-tab="rank"] .dock{display:none}
 .pr-hint{position:absolute; left:50%; transform:translateX(-50%); bottom:max(8px, env(safe-area-inset-bottom, 0px)); width:max-content; max-width:90vw; padding:5px 12px; border-radius:999px; background:#0E1318; border:1px solid #2A3440; text-align:center; font-size:12px; color:#C5CED8; display:none; pointer-events:none}
 @media (orientation:portrait){ .pr-hint{display:block} }
 
-.toast{position:fixed; left:50%; bottom:calc(var(--dock-h, 190px) + 14px); transform:translate(-50%, 12px); z-index:25; max-width:calc(100% - 32px); padding:10px 16px; border-radius:999px; background:var(--fg); color:var(--bg); font-weight:600; font-size:14px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; opacity:0; pointer-events:none; transition:opacity .25s, transform .25s}
+.toast{position:fixed; left:50%; bottom:calc(var(--dock-h, 190px) + 14px); transform:translate(-50%, 12px); z-index:85; max-width:calc(100% - 32px); padding:10px 16px; border-radius:999px; background:var(--fg); color:var(--bg); font-weight:600; font-size:14px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; opacity:0; pointer-events:none; transition:opacity .25s, transform .25s}
 .toast.show{opacity:1; transform:translate(-50%, 0)}
-#fx{position:fixed; inset:0; width:100%; height:100%; pointer-events:none; z-index:30}
+#fx{position:fixed; inset:0; width:100%; height:100%; pointer-events:none; z-index:90}
 
 @media (prefers-reduced-motion: reduce){ *{transition:none !important; animation:none !important} }
 
@@ -370,6 +373,9 @@ h1{font-size:30px; letter-spacing:0}
 .btn:disabled{box-shadow:none}
 .pill{font-weight:800; box-shadow:0 2px 0 var(--edge)}
 .mini{border-radius:12px}
+.game-row .mini{width:auto; min-width:52px; padding:0 12px; font-size:14px; font-weight:700}
+.check-row{display:flex; align-items:center; gap:10px; min-height:44px; font-size:15px}
+.check-row input{width:22px; height:22px; flex:none}
 input[type="text"], input[type="number"], .turn-in, .ta{border-width:2px; border-radius:14px}
 .chip{border-radius:16px; border-width:2px; background:var(--surface); box-shadow:0 3px 0 var(--edge); transition:transform .08s, box-shadow .08s}
 .chip:active:not(:disabled){transform:translateY(2px); box-shadow:0 1px 0 var(--edge)}
@@ -414,11 +420,6 @@ input[type="text"], input[type="number"], .turn-in, .ta{border-width:2px; border
 @media (prefers-reduced-motion: reduce){ .seat.sel .av, .crown{animation:none} }
 
 /* Presentation mode */
-.pres{background:radial-gradient(circle at 15% 0%, #2B2162, #15112B 62%); color:#F7F2FF}
-.prow{background:#251F47; border-radius:.7em; box-shadow:0 .1em 0 #110D24}
-.prow.lead{box-shadow:inset 0 0 0 .1em #FFC93C, 0 .1em 0 #110D24}
-.prow .pbar{background:#3A3166}
-.pr-chart{background:#251F47; box-shadow:0 .2em 0 #110D24}
 .pr-round b, .pr-title{font-family:var(--font-display)}
 
 /* Skins */
@@ -457,15 +458,8 @@ html[data-skin="wash"] .seat.sel .av{box-shadow:0 0 0 3px var(--surface), 0 0 0 
 html[data-skin="wash"] .seat-name, html[data-skin="wash"] .seat-score, html[data-skin="wash"] .seat-pend{box-shadow:none}
 html[data-skin="wash"] .wheel, html[data-skin="wash"] .wheel-hub{box-shadow:0 8px 18px -10px rgba(38,48,63,.5), inset 0 0 0 3px var(--surface), inset 0 0 0 5px var(--line)}
 html[data-skin="wash"] .wheel-hub{box-shadow:0 6px 12px -6px rgba(38,48,63,.5)}
-html[data-skin="wash"] .pres{--pr-grid:#38425C; --pr-card:#1B2233; background:radial-gradient(circle at 15% 0%, #26304D, #10141F 64%); color:#EDE8DA}
-html[data-skin="wash"] .prow{background:#1B2233; border-radius:.7em; box-shadow:0 .1em 0 #0A0D16}
-html[data-skin="wash"] .prow.lead{box-shadow:inset 0 0 0 .1em #E5705F, 0 .1em 0 #0A0D16}
-html[data-skin="wash"] .prow .pbar{background:#2E3852}
-html[data-skin="wash"] .pr-chart{background:#1B2233; box-shadow:0 .2em 0 #0A0D16}
-html[data-skin="wash"] .pr-round b{color:#E5705F}
-html[data-skin="wash"] .prow .psc small{background:#E5705F}
 
-html[data-skin="space"] body{background-color:var(--bg); background-attachment:fixed; background-size:auto; font-weight:500;
+html[data-skin="space"] body, html[data-skin="space"] .pres{background-color:var(--bg); background-attachment:fixed; background-size:auto; font-weight:500;
  background-image:radial-gradient(1.3px 1.3px at 8% 12%, #fff 50%, transparent 52%), radial-gradient(1px 1px at 22% 40%, #cfe 50%, transparent 52%), radial-gradient(1.6px 1.6px at 36% 8%, #fff 50%, transparent 52%), radial-gradient(1px 1px at 48% 27%, #fff 50%, transparent 52%), radial-gradient(1.4px 1.4px at 63% 14%, #ffe 50%, transparent 52%), radial-gradient(1px 1px at 77% 35%, #fff 50%, transparent 52%), radial-gradient(1.5px 1.5px at 91% 9%, #fff 50%, transparent 52%), radial-gradient(1px 1px at 14% 62%, #fff 50%, transparent 52%), radial-gradient(1.4px 1.4px at 41% 74%, #cfe 50%, transparent 52%), radial-gradient(1px 1px at 69% 58%, #fff 50%, transparent 52%), radial-gradient(1.6px 1.6px at 88% 70%, #fff 50%, transparent 52%), radial-gradient(1px 1px at 28% 92%, #fff 50%, transparent 52%), radial-gradient(1.3px 1.3px at 57% 88%, #ffe 50%, transparent 52%), radial-gradient(1px 1px at 95% 96%, #fff 50%, transparent 52%), radial-gradient(60% 40% at 90% 8%, rgba(123,92,255,.22), transparent 70%), radial-gradient(70% 45% at 5% 96%, rgba(77,227,255,.14), transparent 70%)}
 html[data-skin="space"] h1, html[data-skin="space"] .sheet h2{letter-spacing:.04em; font-weight:800}
 html[data-skin="space"] .sub{font-weight:500}
@@ -501,13 +495,6 @@ html[data-skin="space"] .seat-score.negv{background:var(--neg); color:var(--on-n
 html[data-skin="space"] .seat-pend{box-shadow:none}
 html[data-skin="space"] .wheel{background:radial-gradient(circle, var(--surface) 0 57%, var(--surface-2) 58%); box-shadow:0 0 22px -4px rgba(77,227,255,.5), inset 0 0 0 3px var(--surface), inset 0 0 0 5px var(--line)}
 html[data-skin="space"] .wheel-hub{box-shadow:0 0 14px -2px rgba(77,227,255,.4)}
-html[data-skin="space"] .pres{--pr-grid:#2B3470; --pr-card:#11163A; background:radial-gradient(60% 50% at 85% 0%, rgba(123,92,255,.28), transparent 70%), #060818; color:#E9EEFF}
-html[data-skin="space"] .prow{background:#11163A; border-radius:.7em; box-shadow:0 .1em 0 #03040D}
-html[data-skin="space"] .prow.lead{box-shadow:inset 0 0 0 .1em #4DE3FF, 0 .1em 0 #03040D}
-html[data-skin="space"] .prow .pbar{background:#2B3470}
-html[data-skin="space"] .pr-chart{background:#11163A; box-shadow:0 .2em 0 #03040D}
-html[data-skin="space"] .pr-round b{color:#4DE3FF}
-html[data-skin="space"] .prow .psc small{background:#4DE3FF}
 
 html[data-skin="plain"] body{background-color:var(--bg); background-image:none; font-weight:500}
 html[data-skin="plain"] h1{font-size:26px; font-weight:700}
@@ -537,16 +524,120 @@ html[data-skin="plain"] .seat-score.negv{background:none; color:var(--neg)}
 html[data-skin="plain"] .wheel, html[data-skin="plain"] .wheel-hub{box-shadow:inset 0 0 0 1px var(--line)}
 html[data-skin="plain"] .wheel{background:var(--surface-2)}
 html[data-skin="plain"] .wheel-rot{background:repeating-conic-gradient(var(--muted) 0 1.2deg, transparent 1.2deg 15deg)}
-html[data-skin="plain"] .pres{--pr-grid:#34343D; --pr-card:#1A1A1F; background:#0F0F12; color:#F2F2F5}
-html[data-skin="plain"] .prow{background:#1A1A1F; border-radius:.7em; box-shadow:0 .1em 0 #000}
-html[data-skin="plain"] .prow.lead{box-shadow:inset 0 0 0 .1em #5AA2FF, 0 .1em 0 #000}
-html[data-skin="plain"] .prow .pbar{background:#34343D}
-html[data-skin="plain"] .pr-chart{background:#1A1A1F; box-shadow:0 .2em 0 #000}
-html[data-skin="plain"] .pr-round b{color:#5AA2FF}
-html[data-skin="plain"] .prow .psc small{background:#5AA2FF}
 
 html[data-skin="wash"] .masthead, html[data-skin="space"] .masthead{background:transparent; margin-inline:calc(-1 * max(16px, env(safe-area-inset-left, 0px))); padding-inline:max(16px, env(safe-area-inset-left, 0px)); -webkit-backdrop-filter:blur(12px); backdrop-filter:blur(12px)}
 
+/* Tournament */
+.bracket{display:flex; gap:14px; overflow-x:auto; padding:4px 2px 12px; scroll-snap-type:x proximity; -webkit-overflow-scrolling:touch}
+.t-col{flex:none; width:164px; display:flex; flex-direction:column; gap:8px; scroll-snap-align:start}
+.t-col h3{margin:0; font:700 12px var(--font-display); letter-spacing:.06em; text-transform:uppercase; color:var(--muted)}
+.t-matches{flex:1; display:flex; flex-direction:column; justify-content:space-around; gap:10px}
+.t-match{border:2px solid var(--line); border-radius:14px; background:var(--surface); overflow:hidden}
+.t-match.bye{opacity:.7}
+.t-side{appearance:none; -webkit-appearance:none; width:100%; min-height:46px; display:flex; align-items:center; gap:8px; padding:6px 10px; border:0; background:none; color:var(--fg); font:inherit; font-weight:700; text-align:left; cursor:pointer}
+.t-side + .t-side{border-top:1.5px solid var(--line)}
+.t-side:disabled{cursor:default; color:var(--muted); font-weight:500}
+.t-side.won{background:var(--gold); color:var(--fg)}
+.t-side.lost{opacity:.5; text-decoration:line-through}
+.t-dot{flex:none; width:14px; height:14px; border-radius:50%; background:hsl(var(--h,200) var(--ps,68%) var(--pl))}
+.t-name{flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+.t-tick{flex:none; color:var(--accent-ink); font-weight:800}
+.t-champ{display:flex; align-items:center; gap:8px; flex-wrap:wrap; padding:12px 14px; margin-bottom:8px; border-radius:16px; background:var(--gold); border:2px solid var(--gold-line); font-size:17px}
+.t-champ .t-dot{width:18px; height:18px}
+.tour{min-width:0; max-width:100%; display:grid; gap:10px}
+.tour .bracket{max-width:100%; min-width:0}
+.sheet{overflow-x:hidden}
+.tour .btn{width:100%}
+.rr-table{border:2px solid var(--line); border-radius:14px; background:var(--surface); overflow:hidden}
+.rr-row{display:grid; grid-template-columns:22px minmax(0,1fr) 24px 24px 24px 24px 34px; gap:4px; align-items:center; padding:7px 10px; font-variant-numeric:tabular-nums; text-align:center; font-size:14px}
+.rr-row + .rr-row{border-top:1.5px solid var(--line)}
+.rr-row.rr-head{font-size:11px; font-weight:800; letter-spacing:.05em; color:var(--muted); text-transform:uppercase}
+.rr-row.lead{background:var(--gold)}
+.rr-pl{display:flex; align-items:center; gap:7px; min-width:0; text-align:left; font-weight:700}
+.rr-rounds{display:grid; gap:12px}
+.rr-round h3{margin:0 0 6px; font:700 12px var(--font-display); letter-spacing:.06em; text-transform:uppercase; color:var(--muted)}
+.rr-round{display:grid; gap:6px}
+.rr-match{display:grid; grid-template-columns:minmax(0,1fr) auto minmax(0,1fr); align-items:stretch}
+.rr-match .t-side + .t-side{border-top:0}
+.rr-match .t-side{padding:6px 8px}
+.rr-draw{appearance:none; -webkit-appearance:none; border:0; border-left:1.5px solid var(--line); border-right:1.5px solid var(--line); background:none; color:var(--muted); font:inherit; font-size:12px; font-weight:700; padding:0 8px; cursor:pointer}
+.rr-draw.on{background:var(--surface-2); color:var(--fg)}
+.set-panel{display:grid; gap:14px; padding-top:12px}
+.set-panel[hidden]{display:none}
+.tabs.sheet-tabs{display:grid; grid-template-columns:1fr 1.5fr 1fr; margin-top:4px}
+.sheet-tabs button{padding-inline:6px}
+/* Presentation follows the theme and can score */
+html[data-skin="wash"] .pres, html[data-skin="space"] .pres{background-attachment:scroll; background-size:auto}
+.pres{background-image:radial-gradient(var(--dot) 1.6px, transparent 1.9px); background-size:24px 24px}
+html[data-skin="wash"] .pres{background-image:radial-gradient(62% 38% at 0% 0%, var(--b1), transparent 72%), radial-gradient(52% 34% at 100% 22%, var(--b2), transparent 72%), radial-gradient(64% 40% at 18% 100%, var(--b3), transparent 72%)}
+html[data-skin="plain"] .pres{background-image:none}
+.pr-round b{color:var(--accent-ink)}
+.pr-round span, .pr-meta, .prow .prk, .pr-empty{color:var(--muted)}
+.pr-meta .t-time{color:var(--fg)}
+.pr-meta .t-time.over{color:var(--neg)}
+.pr-meta .pill{background:var(--surface-2); color:var(--fg)}
+.prow{background:var(--surface); border:2px solid var(--line); border-radius:.7em; box-shadow:0 .1em 0 var(--edge); cursor:pointer}
+.prow.lead{background:var(--gold); border-color:var(--gold-line); box-shadow:0 .1em 0 var(--edge)}
+.prow.sel{box-shadow:inset 0 0 0 .14em var(--accent), 0 .1em 0 var(--edge)}
+.prow:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+.prow .pbar{background:var(--surface-2)}
+.prow .pbar i.neg{background:var(--neg)}
+.prow .psc.negv{color:var(--neg)}
+.prow .psc small{background:var(--accent); color:var(--on-accent)}
+.prow .psc small.negp{background:var(--neg); color:var(--on-neg)}
+.pr-chart{background:var(--surface); border:2px solid var(--line); box-shadow:0 .2em 0 var(--edge)}
+.pr-hint{background:var(--surface); border-color:var(--line); color:var(--muted)}
+html[data-skin="plain"] .prow, html[data-skin="plain"] .prow.lead, html[data-skin="plain"] .pr-chart{box-shadow:none}
+html[data-skin="plain"] .prow.sel{box-shadow:inset 0 0 0 .14em var(--accent)}
+html[data-skin="space"] .prow, html[data-skin="space"] .pr-chart{box-shadow:0 0 0 1px rgba(77,227,255,.06)}
+body.is-pres .dock{display:block; z-index:70}
+body.is-pres .pres{padding-bottom:calc(var(--dock-h, 0px) + 8px)}
+body.is-pres .pr-hint{bottom:calc(var(--dock-h, 0px) + 8px)}
+.pr-actions{display:flex; gap:8px; justify-content:center; flex-wrap:wrap}
+.pr-actions .pill{background:var(--surface-2); color:var(--fg)}
+.pr-actions .pr-finish{background:var(--accent); color:var(--on-accent)}
+.pres{padding-top:4px}
+.pr-round{justify-items:start; text-align:left}
+@media (max-height:520px){
+  .masthead{grid-template-columns:minmax(0,1fr) minmax(0,1.1fr); align-items:center; gap:12px; padding-block:8px 6px}
+  .masthead .sub{display:none}
+  h1{font-size:22px}
+  .tabs button{height:34px}
+}
+.prow .pmid{gap:.36em}
+.prow .pnm{line-height:1.15; padding-top:.05em}
+.prow .pbar{height:.32em; border-radius:.16em}
+.prow .pbar i{border-radius:.16em}
+.seat{gap:2px}
+.seat-name{margin-top:1px}
+/* Landscape phones: scoring panel becomes a side card so the boards keep their height */
+@media (orientation:landscape) and (max-height:520px){
+  :root{--dock-w:max(290px, min(42vw, 360px))}
+  main{padding-bottom:16px; padding-right:calc(var(--dock-w) + 8px)}
+  body[data-tab="rank"] main{padding-bottom:16px}
+  .table{--ts:min(calc(100vw - var(--dock-w) - 56px), 380px, max(190px, calc(100svh - var(--mast-b, 58px) - 74px)))}
+  .dock, body.is-pres .dock{left:auto; top:auto; right:0; bottom:0; width:var(--dock-w); max-height:calc(100svh - var(--mast-b, 58px) - 6px); overflow-y:auto; display:block; border-radius:20px 0 0 0; border-left:1.5px solid var(--line); padding-left:14px; padding-right:max(14px, env(safe-area-inset-right, 0px)); padding-top:10px}
+  body[data-tab="rank"] .dock{display:none}
+  body.is-pres .dock{display:block}
+  body.is-pres .pres{right:var(--dock-w); padding-bottom:max(10px, env(safe-area-inset-bottom, 0px)); padding-right:10px}
+  body.is-pres .pr-hint{display:none}
+  body.is-pres:not(.has-sel) .pres{right:0; padding-right:max(18px, env(safe-area-inset-right, 0px))}
+  body.is-pres.dock-bar:not(.has-sel) .pres{padding-bottom:0}
+  body.is-pres .pr-actions{justify-content:flex-start}
+  body.is-pres.dock-bar:not(.has-sel) .pr-actions{padding-bottom:max(4px, env(safe-area-inset-bottom, 0px))}
+  .wheel{width:min(var(--wheel-size, 190px), calc(100svh - var(--mast-b, 58px) - 200px)); height:min(var(--wheel-size, 190px), calc(100svh - var(--mast-b, 58px) - 200px)); min-width:120px; min-height:120px}
+  .wheel-box{gap:10px}
+  .dock .dock-who .meta{display:none}
+  .dock .round-bar .btn{white-space:normal; line-height:1.15; padding:0 10px; font-size:14px}
+  .dock{overflow-x:hidden}
+  .toast{bottom:16px}
+  .pres .pr-list{min-height:0}
+  .dock.slim, body.is-pres .dock.slim{width:auto; max-width:var(--dock-w); background:transparent; border:0; box-shadow:none; padding:8px 14px; pointer-events:none}
+  .dock.slim .btn{pointer-events:auto}
+  .dock.slim .dock-head{display:none}
+  .dock.slim .dock-who{display:none}
+  .dock.slim.idle, body.is-pres .dock.slim.idle{display:none}
+}
 /* Look picker */
 .skin-grid{display:grid; grid-template-columns:1fr 1fr; gap:8px}
 .skin-opt{appearance:none; -webkit-appearance:none; display:grid; gap:6px; justify-items:start; text-align:left; padding:10px 12px; border:2px solid var(--line); border-radius:14px; background:var(--bg); color:var(--fg); font:inherit; font-weight:700; cursor:pointer}
@@ -560,15 +651,9 @@ html[data-skin="wash"] .masthead, html[data-skin="space"] .masthead{background:t
 <header class="masthead">
   <div class="mast-row">
     <div class="mast-title">
-      <h1 id="title">Tally Board</h1>
+      <h1 id="title">Round Tally</h1>
       <p class="sub" id="count"></p>
     </div>
-    <button class="icon-btn" id="btnPresent" type="button" aria-label="Presentation mode">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="13" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
-    </button>
-    <button class="icon-btn" id="btnGames" type="button" aria-label="Games">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 3 8l9 5 9-5-9-5Z"/><path d="m3 13 9 5 9-5"/></svg>
-    </button>
     <button class="icon-btn" id="btnSettings" type="button" aria-label="Settings">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></svg>
     </button>
@@ -613,9 +698,44 @@ html[data-skin="wash"] .masthead, html[data-skin="space"] .masthead{background:t
     ["share", "Share result", "Make a picture of the final standings and chart."],
     ["backup", "Backup and restore", "Save every game to a file or copy it, and bring it back later."],
     ["wake", "Keep screen awake", "Stops the phone from sleeping during a game."],
-    ["present", "Presentation mode", "A full-screen scoreboard for a TV: order, round and chart."],
     ["lefty", "Left-handed layout", "Puts the wheel on the left."]
   ];
+  var CUSTOM_KEY = "tally-library", MAX_CUSTOM = 20;
+  function normG(raw, id){
+    if (!raw || typeof raw !== "object") return null;
+    var plan = Array.isArray(raw.plan) ? raw.plan.map(function(x){ return String(x).trim().slice(0, 40); }).filter(Boolean).slice(0, 30) : [];
+    var num = function(v, mx){ return Math.max(0, Math.min(mx, Math.round(+v) || 0)); };
+    return {id: String(id || raw.id || "").slice(0, 24), name: String(raw.name || "Custom game").trim().slice(0, 30) || "Custom game",
+      unit: String(raw.unit || "").trim().slice(0, 12) || "Round", total: num(raw.total, 60), low: !!raw.low, target: num(raw.target, 1000000),
+      plan: plan, cycle: !!raw.cycle && plan.length > 0, note: String(raw.note || "").trim().slice(0, 30), blurb: String(raw.blurb || "").slice(0, 90)};
+  }
+  var BUILTIN = {
+    golf: {name: "Golf", unit: "Hole", total: 9, low: true, target: 0, note: "Low score wins", blurb: "9 holes, lowest total wins."},
+    gin: {name: "Gin Rummy", unit: "Round", total: 0, low: false, target: 100, note: "First to 100", blurb: "Play to 100, highest score wins."},
+    shanghai: {name: "Shanghai", unit: "Round", total: 7, low: true, target: 0, blurb: "7 contracts, lowest score wins.",
+      plan: ["2 sets of 3", "1 set + 1 run of 4", "2 runs of 4", "3 sets of 3", "2 sets + 1 run", "1 set + 2 runs", "3 runs of 4"]},
+    hearts: {name: "Hearts", unit: "Hand", total: 0, low: true, target: 100, cycle: true, plan: ["Pass left", "Pass right", "Pass across", "No pass"], blurb: "Play to 100, lowest score wins. Pass direction rotates."}
+  };
+  Object.keys(BUILTIN).forEach(function(k){ BUILTIN[k] = normG(BUILTIN[k], k); BUILTIN[k].blurb = BUILTIN[k].blurb || ""; });
+  var userLib = {};
+  try { var rawLib = JSON.parse(localStorage.getItem(CUSTOM_KEY) || "{}"); Object.keys(rawLib || {}).slice(0, 40).forEach(function(k){ var g = normG(rawLib[k], k); if (g) userLib[k] = g; }); } catch (e) {}
+  function saveUserLib(){ try { localStorage.setItem(CUSTOM_KEY, JSON.stringify(userLib)); } catch (e) {} }
+  function libGames(){
+    var out = Object.keys(BUILTIN).map(function(k){ return userLib[k] || BUILTIN[k]; });
+    return out.concat(Object.keys(userLib).filter(function(k){ return !BUILTIN[k]; }).map(function(k){ return userLib[k]; }));
+  }
+  function gameSummary(g){
+    if (g.blurb) return g.blurb;
+    var bits = [g.low ? "Low score wins" : "High score wins"];
+    if (g.total) bits.push(g.total + " " + g.unit.toLowerCase() + "s");
+    if (g.target) bits.push("target " + g.target);
+    if (g.plan.length) bits.push(g.plan.length + " in the round list");
+    return bits.join(" · ") + ".";
+  }
+  function gCue(g, n){
+    if (g.plan.length) return g.cycle ? g.plan[(n - 1) % g.plan.length] : (g.plan[n - 1] || "");
+    return g.note;
+  }
   var OFF_BY_DEFAULT = {dealer: 1, timer: 1, sound: 1, lefty: 1};
   function normFeat(raw){
     var o = {};
@@ -651,7 +771,7 @@ html[data-skin="wash"] .masthead, html[data-skin="space"] .masthead{background:t
 
   function sampleState(){
     return {
-      v: 1, title: "Game night", sample: true, lowWins: false, perRound: true, style: "chips", scale: 0, wheelPer: 10, rounds: [], labels: [], draft: {}, incs: DEFAULT_INCS.slice(), feat: normFeat(null), plan: [], dealerId: null, target: 0, limit: 0, targetHit: false, counted: false,
+      v: 1, title: "Game night", sample: true, lowWins: false, perRound: true, style: "chips", scale: 0, wheelPer: 10, rounds: [], labels: [], draft: {}, incs: DEFAULT_INCS.slice(), feat: normFeat(null), plan: [], game: "", gdef: null, dealerId: null, target: 0, limit: 0, targetHit: false, counted: false,
       players: [["Dana", 42], ["Marcus", 37], ["Priya", 37], ["Theo", 21], ["Lena", 8], ["Sam", -4]]
         .map(function(a, i){ return {id: uid(), name: a[0], score: a[1], hue: [16, 205, 285, 145, 340, 48][i]}; })
     };
@@ -663,12 +783,24 @@ html[data-skin="wash"] .masthead, html[data-skin="space"] .masthead{background:t
   function snapshot(){
     return {
       v: 1, title: state.title, sample: !!state.sample, lowWins: !!state.lowWins, style: state.style || "chips", scale: state.scale | 0, wheelPer: state.wheelPer || 10, perRound: state.perRound !== false, rounds: state.rounds, labels: state.labels, draft: state.draft, incs: state.incs,
-      feat: state.feat, plan: state.plan, dealerId: state.dealerId || null, target: state.target | 0, limit: state.limit | 0, targetHit: !!state.targetHit, counted: !!state.counted,
+      feat: state.feat, plan: state.plan, game: state.game || "", gdef: state.gdef || null, dealerId: state.dealerId || null, target: state.target | 0, limit: state.limit | 0, targetHit: !!state.targetHit, counted: !!state.counted, tourney: state.tourney || null,
       players: state.players.map(function(p){ return {id: p.id, name: p.name, score: p.score, hue: p.hue}; })
     };
   }
   function hashHue(str){ var x = 0; for (var i = 0; i < str.length; i++) x = (x * 31 + str.charCodeAt(i)) % 360; return x; }
   function nextHue(i){ return Math.round((i * 137.508 + 20) % 360); }
+  function normTour(t){
+    if (!t || !Array.isArray(t.ent)) return null;
+    var ent = t.ent.slice(0, 20).map(function(e){ return {name: String(e && e.name || "?").slice(0, 24), hue: ((+(e && e.hue) || 0) % 360 + 360) % 360}; });
+    if (ent.length < 2) return null;
+    var picks = {}, fmt = t.fmt === "rr" ? "rr" : "se";
+    if (t.picks && typeof t.picks === "object") Object.keys(t.picks).forEach(function(k){
+      var v = Math.round(+t.picks[k]);
+      var okKey = fmt === "rr" ? /^rr-\d+-\d+$/.test(k) : /^\d+-\d+$/.test(k);
+      if (okKey && isFinite(v) && v >= (fmt === "rr" ? -1 : 0) && v < ent.length) picks[k] = v;
+    });
+    return {ent: ent, picks: picks, fmt: fmt};
+  }
   function normRounds(r){
     return Array.isArray(r) ? r.slice(-200).map(function(o){
       var out = {};
@@ -696,7 +828,7 @@ html[data-skin="wash"] .masthead, html[data-skin="space"] .masthead{background:t
     return {
       v: 1, updated: isFinite(+raw.updated) ? +raw.updated : 0, title: String(raw.title || "Game night").slice(0, 30), sample: !!raw.sample, lowWins: !!raw.lowWins, perRound: raw.perRound !== false, style: raw.style === "slider" ? "wheel" : ["chips", "dial", "wheel"].indexOf(raw.style) >= 0 ? raw.style : "chips", wheelPer: Math.max(1, Math.min(10000, Math.round(+raw.wheelPer) || 10)), scale: [0, 1, 2, 3].indexOf(+raw.scale) >= 0 ? +raw.scale : 0, rounds: normRounds(raw.rounds), labels: normLabels(raw.labels, raw.rounds), draft: normDraft(raw.draft),
       feat: normFeat(raw.feat), plan: Array.isArray(raw.plan) ? raw.plan.map(function(x){ return String(x).trim().slice(0, 40); }).filter(Boolean).slice(0, 30) : [],
-      dealerId: raw.dealerId ? String(raw.dealerId) : null, target: Math.max(0, Math.min(1000000, Math.round(+raw.target) || 0)), limit: Math.max(0, Math.min(3600, Math.round(+raw.limit) || 0)), targetHit: !!raw.targetHit, counted: !!raw.counted,
+      gdef: normG(raw.gdef, raw.game) || (BUILTIN[raw.game] ? BUILTIN[raw.game] : null), game: String(raw.game || "").slice(0, 24), dealerId: raw.dealerId ? String(raw.dealerId) : null, target: Math.max(0, Math.min(1000000, Math.round(+raw.target) || 0)), limit: Math.max(0, Math.min(3600, Math.round(+raw.limit) || 0)), targetHit: !!raw.targetHit, counted: !!raw.counted, tourney: normTour(raw.tourney),
       incs: incs.length ? uniqSort(incs).slice(0, MAX_INC) : DEFAULT_INCS.slice(), players: players
     };
   }
@@ -868,6 +1000,19 @@ html[data-skin="wash"] .masthead, html[data-skin="space"] .masthead{background:t
     tbl.classList.add(L.mode);
     if (L.sp < L.s + 58) tbl.classList.add("m-tight");
   }
+  function centreRound(){
+    var n = state.rounds.length + 1, g = state.gdef, f = state.feat, kids = [];
+    if (g && g.total && n > g.total){
+      return [h("span", {class: "t-rtitle"}, "All done"), h("span", {class: "t-hint"}, g.total + " " + g.unit.toLowerCase() + "s played")];
+    }
+    var cue = g ? gCue(g, n) : (f.rounds && state.plan[n - 1]) || "";
+    kids.push(h("span", {class: "t-rtitle"}, (g ? g.unit : "Round") + " " + n));
+    if (g && g.total) kids.push(h("span", {class: "t-hint"}, "of " + g.total));
+    else if (!g && f.rounds && state.plan.length && n <= state.plan.length) kids.push(h("span", {class: "t-hint"}, "of " + state.plan.length));
+    if (cue) kids.push(h("span", {class: "t-hint t-cue"}, cue));
+    else if (!state.rounds.length && !g) kids.push(h("span", {class: "t-hint"}, "Tap a player to score"));
+    return kids;
+  }
   function buildTable(c){
     var N = state.players.length;
     var sel = state.players.find(function(x){ return x.id === selectedId; });
@@ -895,32 +1040,40 @@ html[data-skin="wash"] .masthead, html[data-skin="space"] .masthead{background:t
       ms.dataset.to = String(sel.score); ms.dataset.id = sel.id;
       mid = h("div", {class: "table-mid"}, h("span", {class: "t-name"}, sel.name), ms, pendEl(sel));
     } else {
-      mid = h("div", {class: "table-mid"}, h("span", {class: "t-hint"}, "Tap a player to score"));
+      mid = h("div", {class: "table-mid"}, centreRound());
     }
     tbl.appendChild(mid);
     var est = Math.min(window.innerWidth - 32, 380, Math.max(270, window.innerHeight - 190 - 250));
     tableMode(tbl, N, est);
     requestAnimationFrame(function(){ if (tbl.isConnected && tbl.clientWidth) tableMode(tbl, N, tbl.clientWidth); });
+    if (typeof ResizeObserver !== "undefined"){
+      var lastW = 0;
+      var ro = new ResizeObserver(function(){
+        if (!tbl.isConnected){ ro.disconnect(); return; }
+        var w = tbl.clientWidth;
+        if (w && Math.abs(w - lastW) > 1){ lastW = w; tableMode(tbl, N, w); }
+      });
+      ro.observe(tbl);
+    }
     return tbl;
   }
 
   /* Presentation mode */
-  var presenting = false, presHide = 0, presRaf = 0;
-  function presCtlShow(){
-    var fades = $("pres").querySelectorAll(".pr-fade"); if (!fades.length) return;
-    Array.prototype.forEach.call(fades, function(x){ x.classList.remove("off"); }); clearTimeout(presHide);
-    presHide = setTimeout(function(){ Array.prototype.forEach.call(fades, function(x){ x.classList.add("off"); }); }, 4000);
+  var presenting = false, presRaf = 0;
+  function presSync(){
+    var want = tab === "rank" && state.players.length > 0;
+    presenting = want; $("pres").hidden = !want; document.body.classList.toggle("is-pres", want);
+    presPlace();
   }
-  function openPresent(){
-    presenting = true; $("pres").hidden = false;
-    try { var de = document.documentElement; if (de.requestFullscreen) de.requestFullscreen().catch(function(){}); } catch (e) {}
-    drawPresent(); presCtlShow(); wakeSync();
+  function presPlace(){
+    var mh = document.querySelector(".masthead");
+    if (!mh) return;
+    var bt = Math.max(0, Math.round(mh.getBoundingClientRect().bottom));
+    document.documentElement.style.setProperty("--mast-b", bt + "px");
+    if (presenting) $("pres").style.top = bt + "px";
   }
-  function closePresent(){
-    presenting = false; $("pres").hidden = true; clearTimeout(presHide);
-    try { if (document.fullscreenElement && document.exitFullscreen) document.exitFullscreen().catch(function(){}); } catch (e) {}
-    wakeSync();
-  }
+  window.addEventListener("resize", presPlace);
+  if (typeof ResizeObserver !== "undefined") new ResizeObserver(presPlace).observe(document.querySelector(".masthead"));
   function drawPresent(){
     var el = $("pres"), c = compute(), n = Math.max(1, c.list.length), R = state.rounds.length, nextN = R + 1, f = state.feat;
     var lab = f.rounds && state.plan[nextN - 1] ? state.plan[nextN - 1] : "";
@@ -933,22 +1086,27 @@ html[data-skin="wash"] .masthead, html[data-skin="space"] .masthead{background:t
       if (state.limit > 0 && elapsed() >= state.limit * 1000) tt.classList.add("over");
       meta.push(tt);
     }
-    meta.push(h("button", {class: "pill pr-fade", type: "button", onclick: function(e){ e.stopPropagation(); closePresent(); }}, "Exit"));
-    var head = h("div", {class: "pr-head"}, h("div", {class: "pr-title"}, state.title), round, h("div", {class: "pr-meta"}, meta));
+    var head = h("div", {class: "pr-head"}, round, h("div", {class: "pr-meta"}, meta));
     var list = h("div", {class: "pr-list"}, c.list.map(function(p){
       var r = c.rank.get(p.id), v = state.perRound ? state.draft[p.id] : 0;
       var left = p.score >= 0 ? c.zero : (p.score - c.lo) / c.span * 100, wd = Math.max(0.8, Math.abs(p.score) / c.span * 100);
       var bar = h("span", {class: "pbar"}, h("i", {class: p.score < 0 ? "neg" : ""}));
       bar.firstChild.style.left = left + "%"; bar.firstChild.style.width = wd + "%";
       var sc = h("span", {class: "psc" + (p.score < 0 ? " negv" : "")}, fmt(p.score), v ? h("small", {class: v < 0 ? "negp" : ""}, fmtSigned(v)) : null);
-      var row = h("div", {class: "prow" + (r === 1 && c.hasLead ? " lead" : "")},
+      var row = h("div", {class: "prow" + (r === 1 && c.hasLead ? " lead" : "") + (p.id === selectedId ? " sel" : ""), role: "button", tabindex: "0", "aria-pressed": String(p.id === selectedId), onclick: function(){ selectedId = (autoDock() && selectedId === p.id) ? null : p.id; render(); },
+        onkeydown: function(e){ if (e.key === "Enter" || e.key === " "){ e.preventDefault(); selectedId = (autoDock() && selectedId === p.id) ? null : p.id; render(); } }},
         h("span", {class: "prk"}, String(r)), avatar(p, r === 1 && c.hasLead), h("div", {class: "pmid"}, h("span", {class: "pnm"}, p.name), bar), sc);
       row.style.setProperty("--h", String(p.hue)); return row;
     }));
     list.style.setProperty("--n", String(n));
     var chart = h("div", {class: "pr-chart"}, h("div", {class: "pr-ct"}, "Score by round"),
       h("div", {class: "pr-cb", id: "prChart"}, R ? null : h("div", {class: "pr-empty"}, "The chart appears after the first round.")));
-    el.replaceChildren(head, h("div", {class: "pr-body"}, list, chart), h("div", {class: "pr-hint pr-fade"}, "Turn your phone sideways to fill a TV."));
+    var acts = [];
+    if (state.feat.editRounds && R) acts.push(h("button", {class: "pill", type: "button", onclick: openRounds}, "Edit rounds"));
+    if (state.feat.share && state.players.length >= 2) acts.push(h("button", {class: "pill", type: "button", onclick: openShare}, "Share result"));
+    if (state.feat.finish && state.players.length >= 2) acts.push(h("button", {class: "pill pr-finish", type: "button", onclick: openFinish}, "Finish game"));
+    el.style.gridTemplateRows = acts.length ? "auto minmax(0,1fr) auto" : "";
+    el.replaceChildren.apply(el, [head, h("div", {class: "pr-body"}, list, chart), acts.length ? h("div", {class: "pr-actions"}, acts) : null].filter(Boolean));
     cancelAnimationFrame(presRaf); presRaf = requestAnimationFrame(drawPresChart);
   }
   function drawPresChart(){
@@ -964,19 +1122,19 @@ html[data-skin="wash"] .masthead, html[data-skin="space"] .masthead{background:t
     var xs = function(i){ return m.l + pw * i / R; }, ys = function(v){ return m.t + ph * (1 - (v - yLo) / (yHi - yLo)); };
     var svg = sv("svg", {viewBox: "0 0 " + W + " " + H, role: "img", "aria-label": "Line chart of each player's running total after each round"});
     ticks.forEach(function(t){
-      svg.appendChild(sv("line", {x1: m.l, x2: W - m.r, y1: ys(t), y2: ys(t), style: "stroke:var(--pr-grid,#3A3166)", "stroke-width": 1}));
-      var tx = sv("text", {x: m.l - fs * .5, y: ys(t) + fs * .35, "text-anchor": "end", "font-size": fs, fill: "#9AA7B4"}); tx.textContent = (t < 0 ? "−" : "") + compact(t); svg.appendChild(tx);
+      svg.appendChild(sv("line", {x1: m.l, x2: W - m.r, y1: ys(t), y2: ys(t), style: "stroke:var(--line)", "stroke-width": 1}));
+      var tx = sv("text", {x: m.l - fs * .5, y: ys(t) + fs * .35, "text-anchor": "end", "font-size": fs, style: "fill:var(--muted)"}); tx.textContent = (t < 0 ? "−" : "") + compact(t); svg.appendChild(tx);
     });
-    if (yLo < 0 && yHi > 0) svg.appendChild(sv("line", {x1: m.l, x2: W - m.r, y1: ys(0), y2: ys(0), stroke: "#9AA7B4", "stroke-width": 1, opacity: .6}));
+    if (yLo < 0 && yHi > 0) svg.appendChild(sv("line", {x1: m.l, x2: W - m.r, y1: ys(0), y2: ys(0), style: "stroke:var(--muted)", "stroke-width": 1, opacity: .6}));
     var every = Math.ceil((R + 1) / Math.max(4, Math.floor(pw / (fs * 3.2))));
     for (var i = 0; i <= R; i += every){
-      var xt = sv("text", {x: xs(i), y: H - fs * .5, "text-anchor": "middle", "font-size": fs, fill: "#9AA7B4"}); xt.textContent = i === 0 ? "Start" : String(i); svg.appendChild(xt);
+      var xt = sv("text", {x: xs(i), y: H - fs * .5, "text-anchor": "middle", "font-size": fs, style: "fill:var(--muted)"}); xt.textContent = i === 0 ? "Start" : String(i); svg.appendChild(xt);
     }
     var labels = [];
     data.forEach(function(d){
-      var col = "hsl(" + d.p.hue + " 68% 62%)";
-      svg.appendChild(sv("polyline", {points: d.vals.map(function(v, i){ return xs(i).toFixed(1) + "," + ys(v).toFixed(1); }).join(" "), fill: "none", stroke: col, "stroke-width": lw, "stroke-linejoin": "round", "stroke-linecap": "round"}));
-      svg.appendChild(sv("circle", {cx: xs(R), cy: ys(d.vals[R]), r: lw * 1.5, fill: col, style: "stroke:var(--pr-card,#251F47)", "stroke-width": 2}));
+      var col = "hsl(" + d.p.hue + " var(--ps,68%) var(--pl))";
+      svg.appendChild(sv("polyline", {points: d.vals.map(function(v, i){ return xs(i).toFixed(1) + "," + ys(v).toFixed(1); }).join(" "), fill: "none", style: "stroke:" + col, "stroke-width": lw, "stroke-linejoin": "round", "stroke-linecap": "round"}));
+      svg.appendChild(sv("circle", {cx: xs(R), cy: ys(d.vals[R]), r: lw * 1.5, style: "fill:" + col + ";stroke:var(--surface)", "stroke-width": 2}));
       if (labelsOn) labels.push({y: ys(d.vals[R]), name: d.p.name});
     });
     labels.sort(function(a, b){ return a.y - b.y; });
@@ -991,13 +1149,11 @@ html[data-skin="wash"] .masthead, html[data-skin="space"] .masthead{background:t
       if (!moved) break;
     }
     labels.forEach(function(l){
-      var t = sv("text", {x: xs(R) + lw * 2.4, y: l.y + fs * .35, "font-size": fs, "font-weight": 600, fill: "#F2F5F8"}); t.textContent = l.name.length > 9 ? l.name.slice(0, 8) + "…" : l.name; svg.appendChild(t);
+      var t = sv("text", {x: xs(R) + lw * 2.4, y: l.y + fs * .35, "font-size": fs, "font-weight": 600, style: "fill:var(--fg)"}); t.textContent = l.name.length > 9 ? l.name.slice(0, 8) + "…" : l.name; svg.appendChild(t);
     });
     host.replaceChildren(svg);
   }
-  $("pres").addEventListener("click", presCtlShow);
-  $("btnPresent").addEventListener("click", openPresent);
-  document.addEventListener("keydown", function(e){ if (e.key === "Escape" && presenting) closePresent(); });
+  document.addEventListener("keydown", function(e){ if (e.key === "Escape" && presenting && overlay.hidden){ tab = "score"; render(); } });
   function presResize(){ if (!presenting) return; cancelAnimationFrame(presRaf); presRaf = requestAnimationFrame(drawPresChart); }
   window.addEventListener("resize", presResize); window.addEventListener("orientationchange", function(){ setTimeout(presResize, 250); });
 
@@ -1228,10 +1384,6 @@ html[data-skin="wash"] .masthead, html[data-skin="space"] .masthead{background:t
 
   function buildStrip(){
     var f = state.feat, parts = [], n = state.rounds.length + 1;
-    if (f.rounds && state.plan.length){
-      var lab = state.plan[n - 1];
-      parts.push(h("div", {class: "st-main"}, h("span", {class: "st-k"}, "Round " + n + (n <= state.plan.length ? " of " + state.plan.length : "")), h("b", {}, lab || (n > state.plan.length ? "Extra round" : " "))));
-    }
     if (f.dealer && state.players.length){
       parts.push(h("button", {class: "pill", type: "button", "aria-label": "Dealer: " + dealerP().name + ". Tap for the next dealer",
         onclick: function(){ pushUndo(); nextDealer(); render(); save(); }}, "Dealer: " + dealerP().name + " ▸"));
@@ -1278,9 +1430,10 @@ html[data-skin="wash"] .masthead, html[data-skin="space"] .masthead{background:t
 
   function render(){
     document.body.dataset.tab = tab;
+    presSync();
     $("tabScore").setAttribute("aria-selected", String(tab === "score"));
     $("tabRank").setAttribute("aria-selected", String(tab === "rank"));
-    $("title").textContent = state.title || "Tally Board";
+    $("title").textContent = state.title || "Round Tally";
     $("count").textContent = state.players.length + " of " + MAX + " players" + (state.lowWins ? " · Low score wins" : "");
     var full = state.players.length >= MAX;
     $("addIn").disabled = full; $("addBtn").disabled = full;
@@ -1307,7 +1460,7 @@ html[data-skin="wash"] .masthead, html[data-skin="space"] .masthead{background:t
     } else if (tab === "score"){
       items = [buildStrip(), buildTable(c)].filter(Boolean);
     } else {
-      items = [buildPodium(c)].concat(c.list.map(function(p){ return buildRow(p, c, "rank"); }), [buildChart(), buildRankActions()]).filter(Boolean);
+      items = [];
     }
     rowsEl.replaceChildren.apply(rowsEl, items);
     void rowsEl.offsetWidth;
@@ -1325,7 +1478,6 @@ html[data-skin="wash"] .masthead, html[data-skin="space"] .masthead{background:t
     renderDock();
     popId = null;
     drawRosterChips();
-    $("btnPresent").hidden = !state.feat.present;
     if (presenting) drawPresent();
     wakeSync();
   }
@@ -1485,6 +1637,9 @@ html[data-skin="wash"] .masthead, html[data-skin="space"] .masthead{background:t
     dialRef = null;
     var slim = autoDock() && !p;
     dock.classList.toggle("slim", slim);
+    document.body.classList.toggle("has-sel", !!p);
+    document.body.classList.toggle("dock-bar", slim && (undoStack.length > 0 || (state.perRound && pendingCount() > 0)));
+    dock.classList.toggle("idle", slim && !undoStack.length && !(state.perRound && pendingCount()));
     if (slim){
       dock.replaceChildren.apply(dock, [
         h("div", {class: "dock-head"},
@@ -1493,8 +1648,9 @@ html[data-skin="wash"] .masthead, html[data-skin="space"] .masthead{background:t
         state.perRound && pendingCount() ? roundBar() : null].filter(Boolean));
       return;
     }
-    if (state.style === "dial"){ var spd = dialSpec(100); input = dialInput(p, spd); sc = scaleRow(spd); }
-    else if (state.style === "wheel") input = wheelInput(p);
+    var inputStyle = presenting ? "chips" : state.style;
+    if (inputStyle === "dial"){ var spd = dialSpec(100); input = dialInput(p, spd); sc = scaleRow(spd); }
+    else if (inputStyle === "wheel") input = wheelInput(p);
     else input = h("div", {class: "chips"}, state.incs.map(function(d){
       return h("button", {class: "chip " + (d > 0 ? "plus" : "minus"), type: "button", disabled: !p, onclick: function(){ bump(d); }}, fmtSigned(d));
     }));
@@ -1502,7 +1658,7 @@ html[data-skin="wash"] .masthead, html[data-skin="space"] .masthead{background:t
       h("div", {class: "dock-head"},
         h("div", {class: "dock-who"},
           h("b", {}, p ? p.name : "No player selected"),
-          h("span", {class: "meta"}, p ? (state.style === "wheel" ? (state.perRound ? "Turn the wheel to add to this round" : "Turn the wheel to score") : state.perRound ? "Tap amounts to add to this round" : "Tap an amount to score") : "Tap a player above")),
+          h("span", {class: "meta"}, p ? (inputStyle === "wheel" ? (state.perRound ? "Turn the wheel to add to this round" : "Turn the wheel to score") : state.perRound ? "Tap amounts to add to this round" : "Tap an amount to score") : "Tap a player above")),
         p ? h("span", {class: "dock-score"}, fmt(p.score), pendEl(p)) : null,
         h("button", {class: "btn ghost sm", type: "button", onclick: undo, disabled: !undoStack.length}, "Undo"),
         h("button", {class: "btn ghost sm", type: "button", onclick: function(){ openEdit(p.id); }, disabled: !p}, "Edit"),
@@ -1602,7 +1758,6 @@ html[data-skin="wash"] .masthead, html[data-skin="space"] .masthead{background:t
   $("tabScore").addEventListener("click", function(){ tab = "score"; render(); });
   $("tabRank").addEventListener("click", function(){ tab = "rank"; render(); });
   $("btnSettings").addEventListener("click", openSettings);
-  $("btnGames").addEventListener("click", openGames);
 
   /* Sheets */
   var overlay = $("overlay"), sheet = $("sheet"), onSheetClose = null, lastFocus = null;
@@ -1658,7 +1813,7 @@ html[data-skin="wash"] .masthead, html[data-skin="space"] .masthead{background:t
     return {
       v: 1, updated: Date.now(), title: uniqueTitle(rematch ? prev.title : "New game"), sample: false,
       lowWins: rematch ? !!prev.lowWins : false, perRound: prev.perRound !== false, style: prev.style, scale: prev.scale, wheelPer: prev.wheelPer,
-      rounds: [], labels: [], draft: {}, incs: prev.incs.slice(), feat: Object.assign({}, prev.feat), plan: rematch ? (prev.plan || []).slice() : [], dealerId: null, target: rematch ? prev.target | 0 : 0, limit: prev.limit | 0, targetHit: false, counted: false,
+      rounds: [], labels: [], draft: {}, incs: prev.incs.slice(), feat: Object.assign({}, prev.feat), plan: rematch ? (prev.plan || []).slice() : [], game: rematch ? prev.game || "" : "", gdef: rematch ? prev.gdef || null : null, dealerId: null, target: rematch ? prev.target | 0 : 0, limit: prev.limit | 0, targetHit: false, counted: false,
       players: rematch ? prev.players.map(function(p){ return {id: uid(), name: p.name, score: 0, hue: p.hue}; }) : []
     };
   }
@@ -1708,7 +1863,8 @@ html[data-skin="wash"] .masthead, html[data-skin="space"] .masthead{background:t
     }
     return out;
   }
-  function openGames(){
+  function openGames(){ openSettings("games"); }
+  function gamesPanel(){
     flush();
     var listEl = h("div", {class: "stack"}), msg = h("p", {class: "msg", "aria-live": "polite"});
     function draw(){
@@ -1735,15 +1891,13 @@ html[data-skin="wash"] .masthead, html[data-skin="space"] .masthead{background:t
       if (!rematch){ try { $("addIn").focus(); } catch (e) {} }
     }
     draw();
-    openSheet("Games", [
-      h("h2", {}, "Games"),
+    return [
       h("p", {class: "foot"}, "Games save on this phone only. Pick one to carry on where you left off."),
       listEl, msg,
       h("button", {class: "btn", type: "button", onclick: function(){ begin(false); }}, "New game"),
       h("button", {class: "btn ghost", type: "button", disabled: !state.players.length, onclick: function(){ begin(true); }}, "Same players, new game"),
-      state.feat.roster ? h("button", {class: "btn ghost", type: "button", onclick: function(){ closeSheet(); openRoster(); }}, "Players and stats") : null,
-      h("button", {class: "btn ghost", type: "button", onclick: closeSheet}, "Done")
-    ]);
+      state.feat.roster ? h("button", {class: "btn ghost", type: "button", onclick: function(){ closeSheet(); openRoster(); }}, "Players and stats") : null
+    ];
   }
 
   /* Rounds editor */
@@ -1901,7 +2055,7 @@ html[data-skin="wash"] .masthead, html[data-skin="space"] .masthead{background:t
         d.vals.forEach(function(v, i){ if (i) x.lineTo(X(i), Y(v)); else x.moveTo(X(i), Y(v)); }); x.stroke();
       });
     }
-    x.textAlign = "left"; x.fillStyle = MU; x.font = "600 26px " + SANS; x.fillText("Tally Board", pad, H - 44);
+    x.textAlign = "left"; x.fillStyle = MU; x.font = "600 26px " + SANS; x.fillText("Round Tally", pad, H - 44);
     return cv;
   }
   function openShare(){
@@ -1968,7 +2122,7 @@ html[data-skin="wash"] .masthead, html[data-skin="space"] .masthead{background:t
   }
   function importText(text){
     var o; try { o = JSON.parse(text); } catch (e) { return "That is not a valid backup."; }
-    if (!o || typeof o !== "object" || !o.games || typeof o.games !== "object") return "That is not a Tally Board backup.";
+    if (!o || typeof o !== "object" || !o.games || typeof o.games !== "object") return "That is not a Round Tally backup.";
     var added = 0, updated = 0;
     Object.keys(o.games).forEach(function(id){
       var g = normalize(o.games[id]); if (!g) return;
@@ -2069,7 +2223,190 @@ html[data-skin="wash"] .masthead, html[data-skin="space"] .masthead{background:t
     return "game";
   }
   function applySkin(v){ document.documentElement.setAttribute("data-skin", v); }
-  function openSettings(){
+
+  /* Tournament: single elimination, tap the winner of each match */
+  var tourSeed = "rand";
+  function bracketOrder(S){
+    var o = [1];
+    while (o.length < S){ var n = o.length * 2, nx = []; o.forEach(function(x){ nx.push(x, n + 1 - x); }); o = nx; }
+    return o;
+  }
+  function tourBuild(t){
+    var n = t.ent.length, S = 2; while (S < n) S *= 2;
+    var order = bracketOrder(S), rounds = [], r0 = [];
+    for (var m = 0; m < S / 2; m++){
+      var a = order[2 * m] - 1, b = order[2 * m + 1] - 1;
+      r0.push({a: a < n ? a : null, b: b < n ? b : null});
+    }
+    rounds.push(r0);
+    function win(r, m){
+      var x = rounds[r][m];
+      if (r === 0){ if (x.b === null) return x.a; if (x.a === null) return x.b; }
+      if (x.a === null || x.b === null) return null;
+      var w = t.picks[r + "-" + m];
+      return (w === x.a || w === x.b) ? w : null;
+    }
+    var r = 0, cnt = S / 2;
+    while (cnt > 1){
+      var nx = [];
+      for (var k = 0; k < cnt / 2; k++) nx.push({a: win(r, 2 * k), b: win(r, 2 * k + 1)});
+      rounds.push(nx); cnt /= 2; r++;
+    }
+    rounds.forEach(function(rd, ri){ rd.forEach(function(x, mi){ x.w = win(ri, mi); x.bye = ri === 0 && (x.a === null || x.b === null); }); });
+    return {rounds: rounds, S: S, champ: rounds[rounds.length - 1][0].w};
+  }
+  function tourPrune(t){
+    if (t.fmt === "rr") return;
+    var again = true;
+    while (again){
+      again = false;
+      var b = tourBuild(t);
+      Object.keys(t.picks).forEach(function(k){
+        var ij = k.split("-"), x = b.rounds[+ij[0]] && b.rounds[+ij[0]][+ij[1]];
+        if (!x || x.bye || (t.picks[k] !== x.a && t.picks[k] !== x.b)){ delete t.picks[k]; again = true; }
+      });
+    }
+  }
+  function tourRoundName(ri, R){
+    var left = R - ri;
+    return left === 1 ? "Final" : left === 2 ? "Semifinals" : left === 3 ? "Quarterfinals" : "Round " + (ri + 1);
+  }
+  var tourFmt = "se";
+  function rrSchedule(n){
+    var arr = []; for (var i = 0; i < n; i++) arr.push(i);
+    if (n % 2) arr.push(null);
+    var m = arr.length, rounds = [];
+    for (var r = 0; r < m - 1; r++){
+      var rd = [];
+      for (var k = 0; k < m / 2; k++){
+        var a = arr[k], b = arr[m - 1 - k];
+        if (a !== null && b !== null) rd.push({a: a, b: b, key: "rr-" + r + "-" + k});
+      }
+      rounds.push(rd);
+      arr.splice(1, 0, arr.pop());
+    }
+    return rounds;
+  }
+  function rrStandings(t){
+    var rows = t.ent.map(function(e, i){ return {i: i, w: 0, d: 0, l: 0, pts: 0, gp: 0}; }), total = 0, done = 0;
+    rrSchedule(t.ent.length).forEach(function(rd){ rd.forEach(function(x){
+      total++;
+      var v = t.picks[x.key]; if (v === undefined) return;
+      done++; rows[x.a].gp++; rows[x.b].gp++;
+      if (v === -1){ rows[x.a].d++; rows[x.b].d++; rows[x.a].pts++; rows[x.b].pts++; }
+      else { var wi = v, li = v === x.a ? x.b : x.a; rows[wi].w++; rows[wi].pts += 3; rows[li].l++; }
+    }); });
+    rows.sort(function(a, b){ return (b.pts - a.pts) || (b.w - a.w) || t.ent[a.i].name.localeCompare(t.ent[b.i].name); });
+    return {rows: rows, total: total, done: done};
+  }
+  function openTourney(){
+    var body = h("div", {class: "tour"});
+    function startTour(){
+      var list = state.players.map(function(p){ return {name: p.name, hue: p.hue, score: p.score}; });
+      if (tourFmt === "rr"){ /* order does not matter */ }
+      else if (tourSeed === "rand"){
+        for (var i = list.length - 1; i > 0; i--){ var j = Math.floor(Math.random() * (i + 1)), t = list[i]; list[i] = list[j]; list[j] = t; }
+      } else if (tourSeed === "score"){
+        list.sort(function(a, b){ return state.lowWins ? a.score - b.score : b.score - a.score; });
+      }
+      state.tourney = {ent: list.slice(0, 20).map(function(e){ return {name: e.name, hue: e.hue}; }), picks: {}, fmt: tourFmt};
+      save(); draw();
+    }
+    function draw(){
+      var t = state.tourney, nodes;
+      if (!t){
+        var n = state.players.length, seg = h("div", {class: "seg three", role: "radiogroup", "aria-label": "Seeding"});
+        seg.replaceChildren.apply(seg, [["Random", "rand"], ["By score", "score"], ["As listed", "list"]].map(function(o){
+          return h("button", {type: "button", role: "radio", "aria-checked": String(tourSeed === o[1]), onclick: function(){ tourSeed = o[1]; draw(); }}, o[0]);
+        }));
+        var S = 2; while (S < n) S *= 2;
+        var fmtSeg = h("div", {class: "seg", role: "radiogroup", "aria-label": "Format"});
+        fmtSeg.replaceChildren.apply(fmtSeg, [["Knockout", "se"], ["Round robin", "rr"]].map(function(o){
+          return h("button", {type: "button", role: "radio", "aria-checked": String(tourFmt === o[1]), onclick: function(){ tourFmt = o[1]; draw(); }}, o[0]);
+        }));
+        var rrRounds = n % 2 ? n : n - 1, rrMatches = n * (n - 1) / 2;
+        nodes = n < 2
+          ? [h("p", {class: "foot"}, "Add at least 2 players on the Score tab to build a bracket.")]
+          : [h("div", {class: "stack"}, h("span", {class: "label"}, "Format"), fmtSeg),
+             h("p", {class: "foot"}, tourFmt === "rr"
+               ? "Everyone plays everyone: " + rrMatches + " matches over " + rrRounds + " rounds. Tap the winner of each match, or Draw. A win is 3 points, a draw 1."
+               : "Single elimination with your " + n + " players. Tap the winner of each match to move them on." + (S > n ? " " + (S - n) + (S - n === 1 ? " player gets" : " players get") + " a first-round bye." : "")),
+             tourFmt === "rr" ? null : h("div", {class: "stack"}, h("span", {class: "label"}, "Seeding"), seg,
+               h("p", {class: "foot"}, tourSeed === "score" ? "Top scorer faces the lowest seed, so the best players meet late." : tourSeed === "list" ? "First player listed is seed 1." : "A fresh random draw.")),
+             h("button", {class: "btn", type: "button", onclick: startTour}, "Start bracket")];
+      } else if (t.fmt === "rr"){
+        var st = rrStandings(t), sched = rrSchedule(t.ent.length), finished = st.total > 0 && st.done === st.total;
+        var top = st.rows.filter(function(r){ return r.pts === st.rows[0].pts && r.w === st.rows[0].w; });
+        function setPick(key, val){
+          var wasDone = rrStandings(t).done === st.total;
+          if (t.picks[key] === val) delete t.picks[key]; else t.picks[key] = val;
+          save();
+          var s2 = rrStandings(t), nowDone = s2.done === s2.total;
+          draw();
+          if (nowDone && !wasDone){ var w0 = s2.rows[0]; burst(t.ent[w0.i].hue); fanfare(); }
+        }
+        var table = h("div", {class: "rr-table", role: "table", "aria-label": "Standings"},
+          h("div", {class: "rr-row rr-head", role: "row"}, h("span", {}, "#"), h("span", {}, "Player"), h("span", {}, "P"), h("span", {}, "W"), h("span", {}, "D"), h("span", {}, "L"), h("span", {}, "Pts")),
+          st.rows.map(function(r, ix){
+            return h("div", {class: "rr-row" + (ix === 0 && st.done ? " lead" : ""), role: "row"},
+              h("span", {}, String(ix + 1)),
+              h("span", {class: "rr-pl"}, h("span", {class: "t-dot", style: "--h:" + t.ent[r.i].hue}), h("span", {class: "t-name"}, t.ent[r.i].name)),
+              h("span", {}, String(r.gp)), h("span", {}, String(r.w)), h("span", {}, String(r.d)), h("span", {}, String(r.l)), h("b", {}, String(r.pts)));
+          }));
+        var rounds = sched.map(function(rd, ri){
+          return h("div", {class: "rr-round"}, h("h3", {}, "Round " + (ri + 1)),
+            rd.map(function(x){
+              var v = t.picks[x.key];
+              function pb(idx){ return h("button", {type: "button", class: "t-side" + (v === idx ? " won" : "") + (v !== undefined && v !== idx && v !== -1 ? " lost" : ""), "aria-pressed": String(v === idx), onclick: function(){ setPick(x.key, idx); }},
+                h("span", {class: "t-dot", style: "--h:" + t.ent[idx].hue}), h("span", {class: "t-name"}, t.ent[idx].name), v === idx ? h("span", {class: "t-tick", "aria-hidden": "true"}, "\u2713") : null); }
+              return h("div", {class: "t-match rr-match"}, pb(x.a),
+                h("button", {type: "button", class: "rr-draw" + (v === -1 ? " on" : ""), "aria-pressed": String(v === -1), onclick: function(){ setPick(x.key, -1); }}, "Draw"),
+                pb(x.b));
+            }));
+        });
+        nodes = [
+          finished ? h("div", {class: "t-champ"}, h("b", {}, top.map(function(r){ return t.ent[r.i].name; }).join(" & ")), h("span", {}, top.length > 1 ? " tied for first" : " wins the round robin")) : h("p", {class: "foot"}, st.done + " of " + st.total + " matches played. Tap the winner of each match, or Draw. Tap again to undo."),
+          table, h("div", {class: "rr-rounds"}, rounds),
+          confirmBtn("Reset tournament", "Tap again to reset", function(){ state.tourney = null; save(); draw(); })
+        ];
+      } else {
+        var b = tourBuild(t), R = b.rounds.length;
+        var champ = b.champ;
+        var cols = b.rounds.map(function(rd, ri){
+          return h("div", {class: "t-col"}, h("h3", {}, tourRoundName(ri, R)),
+            h("div", {class: "t-matches"}, rd.map(function(x, mi){
+              function side(idx){
+                var lab = idx === null ? (x.bye ? "Bye" : "TBD") : t.ent[idx].name;
+                var cls = "t-side" + (x.w !== null && x.w === idx ? " won" : "") + (x.w !== null && idx !== null && x.w !== idx ? " lost" : "");
+                var ready = !x.bye && x.a !== null && x.b !== null && idx !== null;
+                return h("button", {type: "button", class: cls, disabled: !ready, "aria-pressed": String(x.w === idx && idx !== null), "aria-label": ready ? "Pick " + lab + " as winner" : lab,
+                  onclick: function(){
+                    var key = ri + "-" + mi, was = tourBuild(t).champ;
+                    if (t.picks[key] === idx) delete t.picks[key]; else t.picks[key] = idx;
+                    tourPrune(t); save();
+                    var now = tourBuild(t).champ;
+                    draw();
+                    if (now !== null && now !== was){ burst(t.ent[now].hue); fanfare(); }
+                  }},
+                  idx !== null ? h("span", {class: "t-dot", style: "--h:" + t.ent[idx].hue}) : null,
+                  h("span", {class: "t-name"}, lab), x.w === idx && idx !== null && !x.bye ? h("span", {class: "t-tick", "aria-hidden": "true"}, "\u2713") : null);
+              }
+              return h("div", {class: "t-match" + (x.bye ? " bye" : "")}, side(x.a), side(x.b));
+            })));
+        });
+        nodes = [
+          champ !== null ? h("div", {class: "t-champ"}, h("span", {class: "t-dot", style: "--h:" + t.ent[champ].hue}), h("b", {}, t.ent[champ].name), h("span", {}, " wins the tournament")) : h("p", {class: "foot"}, "Tap the winner of each match. Tap again to undo."),
+          h("div", {class: "bracket"}, cols),
+          confirmBtn("Reset bracket", "Tap again to reset", function(){ state.tourney = null; save(); draw(); })
+        ];
+      }
+      body.replaceChildren.apply(body, nodes);
+    }
+    draw();
+    openSheet("Tournament", [h("h2", {}, "Tournament"), body, h("button", {class: "btn", type: "button", onclick: closeSheet}, "Done")]);
+  }
+
+  function openSettings(startTab){
     var titleIn = h("input", {type: "text", id: "fTitle", maxlength: 30, value: state.title, autocomplete: "off"});
     titleIn.addEventListener("input", function(){
       state.title = titleIn.value.trim().slice(0, 30) || "Game night";
@@ -2159,30 +2496,122 @@ html[data-skin="wash"] .masthead, html[data-skin="space"] .masthead{background:t
     var sizeIn = h("input", {type: "range", class: "range-in", min: "130", max: "240", step: "10", value: String(wheelSize()), "aria-label": "Wheel size"});
     sizeIn.addEventListener("input", function(){ setPref("tally-wheel", sizeIn.value); sizeOut.textContent = wheelSize() + "px"; applyWheelSize(); });
     var footText = "Games save on this phone only. Clearing Safari website data removes them.";
+    var libList = h("div", {class: "stack"});
+    function drawLib(){
+      var rows = [h("div", {class: "game-row" + (!state.game ? " cur" : "")}, h("button", {class: "game-main", type: "button", "aria-pressed": String(!state.game), onclick: function(){ loadGame(null); closeSheet(); openSettings("game"); }},
+        h("span", {class: "g-name"}, "Plain rounds", !state.game ? h("span", {class: "g-tag"}, "Loaded") : null), h("span", {class: "g-meta"}, "Just count rounds, no rules.")))];
+      libGames().forEach(function(g){
+        var cur = state.game === g.id, edited = !!(BUILTIN[g.id] && userLib[g.id]);
+        rows.push(h("div", {class: "game-row" + (cur ? " cur" : "")},
+          h("button", {class: "game-main", type: "button", "aria-pressed": String(cur), onclick: function(){ loadGame(g); closeSheet(); openSettings("game"); }},
+            h("span", {class: "g-name"}, g.name, cur ? h("span", {class: "g-tag"}, "Loaded") : null, edited ? h("span", {class: "g-tag"}, "Edited") : null, !BUILTIN[g.id] ? h("span", {class: "g-tag"}, "Custom") : null),
+            h("span", {class: "g-meta"}, gameSummary(g))),
+          h("button", {class: "mini", type: "button", "aria-label": "Edit " + g.name, onclick: function(){ openGameEditor(g); }}, "Edit")));
+      });
+      rows.push(h("button", {class: "btn ghost", type: "button", onclick: function(){ openGameEditor(null); }}, "New custom game"));
+      rows.push(h("button", {class: "btn ghost", type: "button", onclick: function(){
+        openGameEditor({id: "", name: state.title, unit: state.gdef ? state.gdef.unit : "Round", total: state.gdef ? state.gdef.total : 0, low: state.lowWins, target: state.target, plan: state.plan, cycle: state.gdef ? state.gdef.cycle : false, note: state.gdef ? state.gdef.note : ""}); }}, "Save this game\u2019s rules to the library"));
+      libList.replaceChildren.apply(libList, rows);
+    }
+    drawLib();
+    var tabBar = h("div", {class: "tabs sheet-tabs", role: "tablist"}, [["visual", "Visual"], ["game", "Game Settings"], ["games", "Games"]].map(function(k){
+      return h("button", {type: "button", role: "tab", "data-k": k[0], "aria-selected": "false", onclick: function(){ setTab(k[0]); }}, k[1]);
+    }));
+    function setTab(k){
+      Array.prototype.forEach.call(tabBar.children, function(b){ b.setAttribute("aria-selected", String(b.dataset.k === k)); });
+      Array.prototype.forEach.call(sheet.querySelectorAll(".set-panel"), function(el){ el.hidden = el.dataset.tab !== k; });
+      sheet.scrollTop = 0;
+    }
     openSheet("Settings", [
       h("h2", {}, "Settings"),
-      h("label", {class: "field", for: "fTitle"}, h("span", {}, "Game name"), titleIn),
+      tabBar,
+      h("div", {class: "set-panel", "data-tab": "visual"},
       h("div", {class: "stack"}, h("span", {class: "label"}, "Look"), skinGrid),
+      h("div", {class: "stack"}, h("span", {class: "label"}, "Scoring panel shows"), dockSeg, h("p", {class: "foot"}, "Showing it only when a player is tapped gives the table the whole screen. Tap the player again, or the close button, to hide it. Saved on this device.")),
+      h("div", {class: "stack"}, h("span", {class: "label"}, "Wheel size"), h("div", {class: "turn-line"}, h("span", {class: "meta"}, "Small"), sizeIn, h("span", {class: "meta"}, "Large")), sizeOut)),
+      h("div", {class: "set-panel", "data-tab": "game"},
+      h("div", {class: "stack"}, h("span", {class: "label"}, "Game library"), libList, h("p", {class: "foot"}, "Loading a game sets who wins, the target and the round plan, and puts its round info in the middle of the table. Scores stay as they are. Tap Edit to change the rules for how you play; edits and custom games are kept on this device.")),
+      h("label", {class: "field", for: "fTitle"}, h("span", {}, "Game name"), titleIn),
       h("div", {class: "stack"}, h("span", {class: "label"}, "Who wins"), winSeg),
       h("div", {class: "stack"}, h("span", {class: "label"}, "Adding scores"), paySeg, payMsg),
       h("div", {class: "stack"}, h("span", {class: "label"}, "Input style"), styleSeg, h("p", {class: "foot"}, "The dial starts from your smallest scoring amount; pick a bigger step to reach \u00b110,000. On the wheel, drag a finger around the ring and set how many points one full turn is worth. Points go straight into the round as you turn.")),
-      h("div", {class: "stack"}, h("span", {class: "label"}, "Scoring panel shows"), dockSeg, h("p", {class: "foot"}, "Showing it only when a player is tapped gives the table the whole screen. Tap the player again, or the close button, to hide it. Saved on this device.")),
-      h("div", {class: "stack"}, h("span", {class: "label"}, "Wheel size"), h("div", {class: "turn-line"}, h("span", {class: "meta"}, "Small"), sizeIn, h("span", {class: "meta"}, "Large")), sizeOut),
       h("div", {class: "stack"}, h("span", {class: "label"}, "Wheel: points per full turn"), h("div", {class: "turn-line"}, turnIn, h("span", {class: "meta"}, "points per full turn (1 to 10,000)")), h("p", {class: "foot"}, "Used when Input style is Wheel. Clockwise adds, counter-clockwise subtracts.")),
       h("div", {class: "stack"}, h("span", {class: "label"}, "Scoring amounts"), incWrap, incForm, incMsg,
         h("button", {class: "btn ghost", type: "button", onclick: function(){ state.incs = DEFAULT_INCS.slice(); incMsg.textContent = ""; drawIncs(); renderDock(); save(); }}, "Use default amounts")),
       h("div", {class: "stack"}, h("span", {class: "label"}, "Features"),
         h("button", {class: "btn ghost", type: "button", onclick: function(){ closeSheet(); openFeatures(); }}, "Choose features (Simple to Everything)")),
       h("div", {class: "stack"}, h("span", {class: "label"}, "Game"),
+        state.players.length >= 2 || state.tourney ? h("button", {class: "btn ghost", type: "button", onclick: function(){ closeSheet(); openTourney(); }}, "Tournament bracket") : null,
         state.feat.finish && state.players.length >= 2 ? h("button", {class: "btn ghost", type: "button", onclick: function(){ closeSheet(); openFinish(); }}, "Finish game") : null,
         state.feat.backup ? h("button", {class: "btn ghost", type: "button", onclick: function(){ closeSheet(); openBackup(); }}, "Backup and restore") : null,
         confirmBtn("Reset all scores to 0", "Tap again to reset", function(){ pushUndo(); state.players.forEach(function(p){ p.score = 0; }); state.rounds = []; state.labels = []; state.draft = {}; state.counted = false; state.targetHit = false; timerReset(); save(); closeSheet(); }),
-        confirmBtn("Remove all players", "Tap again to remove all", function(){ pushUndo(); state.players = []; state.sample = false; selectedId = null; state.rounds = []; state.labels = []; state.draft = {}; save(); closeSheet(); })),
-      h("p", {class: "foot"}, footText),
+        confirmBtn("Remove all players", "Tap again to remove all", function(){ pushUndo(); state.players = []; state.sample = false; selectedId = null; state.rounds = []; state.labels = []; state.draft = {}; save(); closeSheet(); }))),
+      h("div", {class: "set-panel", "data-tab": "games"}, gamesPanel()),
       h("button", {class: "btn", type: "button", onclick: closeSheet}, "Done")
     ]);
+    setTab(["visual", "game", "games"].indexOf(startTab) >= 0 ? startTab : "visual");
   }
 
+  function loadGame(g){
+    if (!g){ state.game = ""; state.gdef = null; save(); render(); return; }
+    state.game = g.id; state.gdef = JSON.parse(JSON.stringify(g));
+    state.lowWins = g.low; state.target = g.target; state.targetHit = false;
+    var pl = g.plan.slice();
+    if (g.cycle) while (pl.length < 12) pl = pl.concat(g.plan);
+    state.plan = pl.slice(0, 30);
+    state.feat.rounds = true; if (g.target) state.feat.target = true;
+    if (/^(Game night|New game)/.test(state.title)) state.title = g.name;
+    save(); render();
+  }
+  function openGameEditor(g0){
+    var isNew = !g0 || !g0.id || !(userLib[g0.id] || BUILTIN[g0.id]);
+    var g = normG(g0 || {name: "My game"}, g0 && g0.id) , low = g.low;
+    var f = function(id, label, node){ return h("label", {class: "field", for: id}, h("span", {}, label), node); };
+    var nameIn = h("input", {type: "text", id: "gName", maxlength: 30, value: g.name, autocomplete: "off"});
+    var unitIn = h("input", {type: "text", id: "gUnit", maxlength: 12, value: g.unit, autocomplete: "off", placeholder: "Round, Hole, Hand…"});
+    var totIn = h("input", {type: "number", inputmode: "numeric", min: "0", max: "60", id: "gTot", value: String(g.total)});
+    var tgtIn = h("input", {type: "number", inputmode: "numeric", min: "0", id: "gTgt", value: String(g.target)});
+    var noteIn = h("input", {type: "text", id: "gNote", maxlength: 30, value: g.note, autocomplete: "off", placeholder: "Shown in the middle, e.g. First to 100"});
+    var planIn = h("textarea", {class: "ta", id: "gPlan", maxlength: 1500, placeholder: "One per line, for example:\n2 sets of 3\n1 set + 1 run of 4"}); planIn.value = g.plan.join("\n");
+    var cyc = h("input", {type: "checkbox", id: "gCyc"}); cyc.checked = g.cycle;
+    var seg = h("div", {class: "seg", role: "radiogroup", "aria-label": "Who wins"}), msg = h("p", {class: "msg", "aria-live": "polite"});
+    function drawSeg(){ seg.replaceChildren.apply(seg, [["High score wins", false], ["Low score wins", true]].map(function(o){
+      return h("button", {type: "button", role: "radio", "aria-checked": String(low === o[1]), onclick: function(){ low = o[1]; drawSeg(); }}, o[0]); })); }
+    drawSeg();
+    function read(){
+      return normG({id: g.id, name: nameIn.value, unit: unitIn.value, total: totIn.value, low: low, target: tgtIn.value, note: noteIn.value, cycle: cyc.checked,
+        plan: planIn.value.split("\n")}, g.id);
+    }
+    function commit(load){
+      var d = read(), isB = !!BUILTIN[g.id];
+      if (!d.name.trim()){ msg.textContent = "Give it a name."; return; }
+      if (!isB && !userLib[g.id]){
+        if (Object.keys(userLib).filter(function(k){ return !BUILTIN[k]; }).length >= MAX_CUSTOM){ msg.textContent = "You can keep up to " + MAX_CUSTOM + " custom games."; return; }
+        d.id = "c" + uid(); d.blurb = "";
+      } else d.id = g.id;
+      d.blurb = "";
+      userLib[d.id] = d; saveUserLib();
+      if (load) loadGame(d);
+      closeSheet(); openSettings("game");
+    }
+    var extra = [];
+    if (!isNew && BUILTIN[g.id] && userLib[g.id]) extra.push(confirmBtn("Reset to original rules", "Tap again to reset", function(){ delete userLib[g.id]; saveUserLib(); closeSheet(); openSettings("game"); }));
+    if (!isNew && !BUILTIN[g.id]) extra.push(confirmBtn("Delete this game", "Tap again to delete", function(){ delete userLib[g.id]; saveUserLib(); closeSheet(); openSettings("game"); }));
+    openSheet("Edit game", [
+      h("h2", {}, isNew ? "New custom game" : "Edit " + g.name),
+      f("gName", "Name", nameIn),
+      h("div", {class: "stack"}, h("span", {class: "label"}, "Who wins"), seg),
+      f("gUnit", "What a round is called", unitIn),
+      f("gTot", "Number of rounds (0 for open-ended)", totIn),
+      f("gTgt", "Target score (0 for none)", tgtIn),
+      f("gPlan", "Round list, shown in the middle (optional)", planIn),
+      h("label", {class: "check-row", for: "gCyc"}, cyc, h("span", {}, "Repeat the list when it runs out")),
+      f("gNote", "Note when there is no list (optional)", noteIn),
+      msg,
+      h("button", {class: "btn", type: "button", onclick: function(){ commit(true); }}, "Save and use now"),
+      h("button", {class: "btn ghost", type: "button", onclick: function(){ commit(false); }}, "Save to library")
+    ].concat(extra, [h("button", {class: "btn ghost", type: "button", onclick: function(){ closeSheet(); openSettings("game"); }}, "Cancel")]));
+  }
   function openEdit(id){
     var p = state.players.find(function(x){ return x.id === id; }); if (!p) return;
     var nameIn = h("input", {type: "text", id: "fName", maxlength: 24, value: p.name, autocomplete: "off"});
